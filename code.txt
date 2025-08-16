@@ -1,0 +1,15 @@
+double sum(double a, double b) {
+    //         perfroms sum of two numbers
+    return a + b;
+}
+
+int main() {
+    long long a = 23;
+    double b = 2.33;
+    string c = "Saurav";
+    long double = 3.4E+2;
+    char e = 'v';
+    std::cout << sum(a, b) << std::endl;  // prints sum of two numbers
+
+    return 0;
+}

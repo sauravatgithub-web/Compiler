@@ -1,0 +1,20 @@
+id        : \( _ \| letter \) \. \( _ \| letter \| digit \) \*
+double    : \( digit \+ \) \. \( . \. \( digit \+ \) \) \? \. \( \( E \| e \) \. \( + \| - \) \? \. \( digit \+ \) \) \?
+integer   : \( digit \+ \)
+relop     : < \| > \| < \. = \| > \. = \| = \. = \| ! \. =
+aop       : + \| - \| * \| / \| %
+bop       : & \| | \| ^ \| ~ \| \( < \. < \) \| \( > \. > \)
+lop       : \( & \. & \) \| \( | \. | \)
+assign    : = \| \( \( + \| - \| * \| / \| % \| & \| | \| ^ \) \. = \) \| \( \( \( < \. < \) \| \( > \. > \) \) \. = \)
+ws        : white_space \. \( white_space \) \*
+end       : ;
+fas       : (
+fae       : )
+cbs       : {
+cbe       : }
+larrow    : <
+rarrow    : >
+scrop     : : \. :
+comma     : ,
+character : ' \. char \. '
+string    : " \. \( char \) \* \. "

@@ -101,7 +101,7 @@ minimized_DFA DFA::state_reduction() {
         std::sort(normalized.begin(), normalized.end());
 
         std::map<State, int> state_to_partition;
-        for(int i = 0; i < normalized.size(); ++i) {
+        for(int i = 0; i < int(normalized.size()); ++i) {
             for(const State& s : normalized[i]) {
                 state_to_partition[s] = i;
             }

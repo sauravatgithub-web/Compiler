@@ -10,7 +10,7 @@
 std::vector<std::pair<minimized_DFA, std::string>> create_state_machines() {
     std::ifstream infile(REGEX_SOURCE_FILE);
     if(!infile.is_open()) {
-        std::cerr << "Failed to open grammar source file." << std::endl;
+        std::cerr << "Failed to open regex source file." << std::endl;
         return {};
     }
 

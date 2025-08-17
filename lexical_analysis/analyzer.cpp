@@ -31,6 +31,7 @@ int main() {
 
     std::string line;
     int line_counter = 0;
+    std::vector<Token> token_sequence;
 
     while(std::getline(infile, line)) {
         line_counter++;
@@ -78,7 +79,7 @@ int main() {
 
             if(last_accept_index != -1) {
                 std::string token_lexeme = line.substr(index, last_accept_index - index + 1);
-                token_creator(token_lexeme, last_accept_machine, symTable, litTable);
+                token_creator(token_lexeme, last_accept_machine, symTable, litTable, token_sequence);
                 index = last_accept_index + 1;
             } 
             else {
@@ -88,7 +89,7 @@ int main() {
         }
     }
 
-    for(auto token : token_sequence) std::cout << token << std::endl;
+    for(Token token : token_sequence) std::cout << token << std::endl;
 
     return 0;
 }

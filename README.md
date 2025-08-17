@@ -22,12 +22,16 @@ The folder structure of this stage is shown below :
 | File                           | Description                                                 | 
 |--------------------------------|-------------------------------------------------------------| 
 | **automata.hpp**               | Defines Automata class                                      | 
-| **dfa.hpp**                    | Implements DFA logic, including build and minimization      |
+| **dfa.cpp**                    | Implements DFA logic, including build and minimization      |
+| **dfa.hpp**                    | Declares DFA class, and minimized_DFA class                 |
 | **fsm_elements.hpp**           | Defines core FSM components like `State`, and `Transition`  |
 | **fsm.hpp**                    | Entry point for Stage 2 — builds DFAs from grammar.         |
-| **nfa.hpp**                    | Implements NFA logic, including ε-transitions               |
-| **regex_postfix.hpp**          | Converts regular expressions to postfix form                |
-| **utility.hpp**                | Flows through the overall program across different files    |
+| **nfa.cpp**                    | Implements NFA logic, including ε-transitions               |
+| **nfa.hpp**                    | Declases NFA class                                          |
+| **regex_postfix.cpp**          | Converts regular expressions to postfix form                |
+| **regex_postfix.hpp**          | Declares toPostfix function and other dependent functions   |
+| **utility.cpp**                | Flows through the overall program across different files    |
+| **utility.hpp**                | Declares create_machine function                            |
 
 The state machines built in this part will be used in next phase to identify various tokens and lexemes. I have explained the working in my other repository [REGEX to Automata](https://github.com/sauravatgithub-web/REGEX-to-Automata). There are little differences but the overall method remains same. Some of them are as follows - 
 * This version accepts `string` as input while the directed repo takes `char` as input.
@@ -39,12 +43,16 @@ The work flow diagram in this stage looks as below :-
 ```mermaid
 flowchart LR
     R[regex.txt] --> HPP[automata.hpp]
-    HPP --> U[utility.hpp]
-    U --> R[regex_postfix.hpp]
-    U --> N[nfa.hpp]
-    A[automata.hpp] --> N
-    G --> D[dfa.hpp]
-    A --> D
+    UH[utility.hpp] --> HPP
+    UC[utility.cpp] --> UH
+    RH[regex_postfix.hpp] --> UH
+    RC[regex_postfix.cpp] --> RH
+    NH[nfa.hpp] --> UH
+    NC[nfa.cpp] -->NH
+    A[automata.hpp] --> NH
+    DH[dfa.hpp] --> UH
+    DC[dfa.cpp] --> DH
+    A --> DH
 ```
 
 ## Stage 3
@@ -55,18 +63,21 @@ The folder structure of this stage is shown below :
 | File                           | Description                                                            | 
 |--------------------------------|------------------------------------------------------------------------| 
 | **analyzer.hpp**               | Entry point for stage 3 - recieves FSMs from stage 2 and builds tokens |
+| **literal_table.hpp**          | Defines Literal Table class to store all literals for next stages      |
 | **machine.hpp**                | Defines State Machine class for FSMs from Stage 1                      |
 | **symbol_table.hpp**           | Defines Symbol Table class to store all identifiers for next stages    |
-| **token.hpp**                  | Defines token class, token types, keywords and related functions       |
+| **token.cpp**                  | Defines token class, token types, keywords and related functions       |
+| **token.hpp**                  | Defines token class, token types and declares token_creator function   |
 
-The work in this stage is comparatively easy from the previous stage. To keep it simple, we are parsing through each line of code and simultaneously updating `current_state` of our machines. When we are reaching final state for a machine ensuring that we are the following **maximum substring matching** rule, we build token and store it. Now, all the tokens generated will be passed to next stage for syntax analysis.
+The work in this stage is comparatively easy from the previous stage. To keep it simple, we are parsing through each line of code and simultaneously updating `current_state` of our machines. When we are reaching final state for a machine ensuring that we are the following **maximum substring matching** rule, we build token and store it. While generating the token, if it identifies as identifier, we will store it in symbol table. On the other hanc, if it's numerical, floating, string, character or boolean constant, we will store it in literal table. Now, all the tokens generated will be passed to next stage for syntax analysis.
 
 The work flow diagram in this stage looks as below :- 
 ```mermaid
 flowchart LR
-    S[symbol_table.hpp] --> T
-    T --> A[analyzer.hpp]
+    L[literal_table.hpp] --> TH[token.hpp]
+    S[symbol_table.hpp] --> TH
+    TC[token.cpp] --> TH
+    TH --> A[analyzer.hpp]
     M[machine.hpp] --> A
     C[code.txt] --> A
-
 ```

@@ -38,12 +38,12 @@ The state machines built in this part will be used in next phase to identify var
 The work flow diagram in this stage looks as below :- 
 ```mermaid
 flowchart LR
-    R[regex.txt\n(Regular Expression Source File)] --> HPP[automata.hpp\n(Main builder)]
+    R[regex.txt] --> HPP[automata.hpp]
     HPP --> U[utility.hpp]
-    U --> R[regex_postfix.hpp\n(Convert regex to postfix)]
-    U --> N[nfa.hpp\n(Build NFA)]
-    A[automata.hpp\n(Automata Class)] --> N
-    G --> D[dfa.hpp\n(Build DFA and minimizes)]
+    U --> R[regex_postfix.hpp]
+    U --> N[nfa.hpp]
+    A[automata.hpp] --> N
+    G --> D[dfa.hpp]
     A --> D
 ```
 
@@ -64,8 +64,9 @@ The work in this stage is comparatively easy from the previous stage. To keep it
 The work flow diagram in this stage looks as below :- 
 ```mermaid
 flowchart LR
-    S[symbol_table.hpp\n(Symbol Table)] --> T
-    T --> A[analyzer.hpp\n(Main builder)]
-    M[machine.hpp\n(State Machine Class)] --> A
-    C[code.txt\n(C++ code)] --> A
+    S[symbol_table.hpp] --> T
+    T --> A[analyzer.hpp]
+    M[machine.hpp] --> A
+    C[code.txt] --> A
+
 ```

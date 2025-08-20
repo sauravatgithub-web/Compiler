@@ -15,7 +15,7 @@ public:
 };
 
 class DFA : public Automata {
-    public:
+public:
     std::vector<State> final_states;
     
     void create_dfa(NFA nfa, StateTransitions& stateTransitions, bool ep);

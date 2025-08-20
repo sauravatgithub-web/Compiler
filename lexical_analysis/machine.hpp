@@ -9,7 +9,6 @@
 class State_Machine {
 private:
     minimized_DFA dfa;
-    
 public:
     std::string name;
     State current_state;

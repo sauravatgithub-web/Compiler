@@ -4,9 +4,8 @@
 #include "nfa.hpp"
 #include "dfa.hpp"
 
-StateTransitions createTransitionMap(NFA);
-void fill_epsilon_inputs(NFA, StateTransitions&);
-void fill_non_epsilon_inputs(NFA, StateTransitions&);
-
+StateTransitions createTransitionMap(NFA nfa);
+void fill_epsilon_inputs(NFA nfa, StateTransitions& stateTransitions);
+void fill_non_epsilon_inputs(NFA nfa, StateTransitions& stateTransitions);
 
 std::pair<minimized_DFA, std::string> create_machine(std::string expression);

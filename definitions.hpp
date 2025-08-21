@@ -7,3 +7,7 @@
 // lexical_analysis
 
 #define CODE_SOURCE_FILE "code.txt"
+
+// parser
+
+#define GRAMMAR_SOURCE_FILE "grammar.txt"

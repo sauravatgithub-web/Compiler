@@ -1,6 +1,38 @@
+#include <iostream>
+#include <fstream>
 #include <sstream>
 #include <algorithm>
 #include "grammar.hpp"
+#include "../definitions.hpp"
+
+int Grammar::create() {
+    std::ifstream infile(GRAMMAR_SOURCE_FILE);
+    if(!infile.is_open()) {
+        std::cerr << "Failed to open grammar source file" << std::endl;
+        return -1;
+    }
+
+    std::string line;
+    while(std::getline(infile, line)) {
+        if(line.empty()) continue;
+
+        if(line.find("Non-terminating Symbols") != std::string::npos) {
+            addNonTerminals(line);
+        }
+        else if(line.find("Terminating Symbols") != std::string::npos) {
+            addTerminals(line);
+        }
+        else if(line.find("Productions") != std::string::npos) {
+            while(std::getline(infile, line) && !line.empty() && line.find("Start Symbol") == std::string::npos) {
+                createProductions(line);
+            }
+        }
+    }
+
+    startSymbol = symbolTable["START"];
+
+    return 0;
+}
 
 void Grammar::addNonTerminals(const std::string& line) {
     std::string symbols = line.substr(line.find(":") + 1);

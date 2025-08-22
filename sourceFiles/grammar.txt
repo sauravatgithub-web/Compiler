@@ -1,0 +1,7 @@
+Non-terminating Symbols : A, A'
+Terminating Symbols : c, d, $
+Productions : 
+START -> A
+A -> c A'
+A' -> d A' | $
+Start Symbol : A

@@ -1,6 +1,0 @@
-Non-terminating Symbols : A, A'
-Terminating Symbols : c d e
-Production : 
-A -> c A'
-A' -> d A' | e
-Start Symbol : A

@@ -1,34 +1,25 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "grammar.hpp"
+#include "utility.hpp"
 #include "../definitions.hpp"
+#include "../lexical_analysis/analyzer.hpp"
 
-int main() {
-    std::ifstream infile(GRAMMAR_SOURCE_FILE);
-    if(!infile.is_open()) {
-        std::cerr << "Failed to open grammar source file" << std::endl;
-        return 1;
+int main() {    
+    auto [tokens, symTable, litTable] = getTokens();
+    for(Token token : tokens) std::cout << token << std::endl;
+
+    Grammar grammar;  
+    if(grammar.create() == -1) {
+        std::exit(1);
     }
 
-    std::string line;
-    while(std::getline(infile, line)) {
-        if(line.empty()) continue;
-        Grammar grammar;
-
-        if(line.find("Non-terminating Symbols") != std::string::npos) {
-            grammar.addNonTerminals(line);
-        }
-        else if(line.find("Terminating Symbols") != std::string::npos) {
-            grammar.addTerminals(line);
-        }
-        else if(line.find("Productions") != std::string::npos) {
-            while(std::getline(infile, line) && !line.empty() && line.find("Start Symbol") == std::string::npos) {
-                grammar.createProductions(line);
-            }
-        }
+    if(recursive_descent_procedure(grammar, tokens, 0) == -1) {
+        std::cerr << "Parsing error" << std::endl;
+        std::exit(1);
     }
 
-
-
+    std::cout << "Parsing completed" << std::endl;
     return 0;
 }

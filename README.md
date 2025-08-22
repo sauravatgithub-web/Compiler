@@ -4,10 +4,11 @@ This project attempts to build a compiler based on C++ programming language. The
     <li> The first stage involves describing regular expressions for the language. </li>
     <li> The second stage involves building state diagram for each of the regex patterns. We will try to build a DFA for each regex pattern to be used in further stages. </li>
     <li> The third stage will perform lexical analysis of the code. In this part, we will try to generate token sequuences to be used in further stages. </li>
+    <li> The fourth stage is defining grammar for our language. </li>
 </ul>
 
 ## Stage 1
-We will define our regex in [regex.txt](regex.txt) file. 2<sup>nd</sup> stage will use this grammar patterns to build various state machines. It is important that the grammar is defined correctly using **concatenation** `.`, **or** `|`, **Kleen's closure** `*`, **optional** `?` and **Kleen's plus** operator `+`, all at correct places to ensure desired output. To include a wide range of inputs, operators are preceded by `\` as `\.`, `\|`, `\?` or `\*`. Even `(` as operator must be written as `\(` and `)` as `\)`. It will be better if spacing are appropriately added while defining the regular expressions, however, it is not necessary. The structure for grammar statement is : 
+We will define our regex in [regex.txt](sourceFiles/regex.txt) file. 2<sup>nd</sup> stage will use this grammar patterns to build various state machines. It is important that the grammar is defined correctly using **concatenation** `.`, **or** `|`, **Kleen's closure** `*`, **optional** `?` and **Kleen's plus** operator `+`, all at correct places to ensure desired output. To include a wide range of inputs, operators are preceded by `\` as `\.`, `\|`, `\?` or `\*`. Even `(` as operator must be written as `\(` and `)` as `\)`. It will be better if spacing are appropriately added while defining the regular expressions, however, it is not necessary. The structure for grammar statement is : 
 ```
 token_name : expression
 Eg: digits : digit \. \( digit \) \*
@@ -15,23 +16,19 @@ Eg: digits : digit \+
 ```
 
 ## Stage 2
-This stage involves [automata](automata) folder which reads from [regex.txt](regex.txt) file and for each line, we will build a state machine, particulary a Definite Finite Automata (DFA). 
+This stage involves [automata](automata) folder which reads from [regex.txt](sourceFiles/regex.txt) file and for each line, we will build a state machine, particulary a Definite Finite Automata (DFA). 
 
 The folder structure of this stage is shown below : 
 
 | File                           | Description                                                 | 
 |--------------------------------|-------------------------------------------------------------| 
 | **automata.hpp**               | Defines Automata class                                      | 
-| **dfa.cpp**                    | Implements DFA logic, including build and minimization      |
-| **dfa.hpp**                    | Declares DFA class, and minimized_DFA class                 |
+| **dfa**                        | Implements DFA logic, including build and minimization      |
 | **fsm_elements.hpp**           | Defines core FSM components like `State`, and `Transition`  |
 | **fsm.hpp**                    | Entry point for Stage 2 — builds DFAs from grammar.         |
-| **nfa.cpp**                    | Implements NFA logic, including ε-transitions               |
-| **nfa.hpp**                    | Declases NFA class                                          |
-| **regex_postfix.cpp**          | Converts regular expressions to postfix form                |
-| **regex_postfix.hpp**          | Declares toPostfix function and other dependent functions   |
-| **utility.cpp**                | Flows through the overall program across different files    |
-| **utility.hpp**                | Declares create_machine function                            |
+| **nfa**                        | Implements NFA logic, including ε-transitions               |
+| **regex_postfix**              | Converts regular expressions to postfix form                |
+| **utility**                    | Flows through the overall program across different files    |
 
 The state machines built in this part will be used in next phase to identify various tokens and lexemes. I have explained the working in my other repository [REGEX to Automata](https://github.com/sauravatgithub-web/REGEX-to-Automata). There are little differences but the overall method remains same. Some of them are as follows - 
 * This version accepts `string` as input while the directed repo takes `char` as input.
@@ -56,7 +53,7 @@ flowchart LR
 ```
 
 ## Stage 3
-This stage involves [lexical_analysis](lexical_analysis) folder which reads from the [code.txt](code.txt) file and for each line, we will build token utilizing the state machines developed in previous stage. We will be  performing lexical analysis of the code and create tokens. The token sequences generated will further be used for syntax analysis in next stages.
+This stage involves [lexical_analysis](lexical_analysis) folder which reads from the [code.txt](sourceFiles/code.txt) file and for each line, we will build token utilizing the state machines developed in previous stage. We will be  performing lexical analysis of the code and create tokens. The token sequences generated will further be used for syntax analysis in next stages.
 
 The folder structure of this stage is shown below : 
 
@@ -66,10 +63,9 @@ The folder structure of this stage is shown below :
 | **literal_table.hpp**          | Defines Literal Table class to store all literals for next stages      |
 | **machine.hpp**                | Defines State Machine class for FSMs from Stage 1                      |
 | **symbol_table.hpp**           | Defines Symbol Table class to store all identifiers for next stages    |
-| **token.cpp**                  | Defines token class, token types, keywords and related functions       |
-| **token.hpp**                  | Defines token class, token types and declares token_creator function   |
+| **token**                      | Defines token class, token types, keywords and related functions       |
 
-The work in this stage is comparatively easy from the previous stage. To keep it simple, we are parsing through each line of code and simultaneously updating `current_state` of our machines. When we are reaching final state for a machine ensuring that we are the following **maximum substring matching** rule, we build token and store it. While generating the token, if it identifies as identifier, we will store it in symbol table. On the other hanc, if it's numerical, floating, string, character or boolean constant, we will store it in literal table. Now, all the tokens generated will be passed to next stage for syntax analysis.
+The work in this stage is comparatively easy from the previous stage. To keep it simple, we are parsing through each line of code and simultaneously updating `current_state` of our machines. When we are reaching final state for a machine ensuring that we are the following **maximum substring matching** rule, we build token and store it. While generating the token, if it identifies as identifier, we will store it in symbol table. On the other hand, if it's numerical, floating, string, character or boolean constant, we will store it in literal table. Now, all the tokens generated will be passed to next stage for syntax analysis.
 
 The work flow diagram in this stage looks as below :- 
 ```mermaid
@@ -81,3 +77,6 @@ flowchart LR
     M[machine.hpp] --> A
     C[code.txt] --> A
 ```
+
+## Stage 4
+We will define our grammar in [grammar.txt](sourceFiles/grammar.txt) file. Our 5<sup>th</sup> stage i.e. syntax analysis will use the grammar built in this stage and the tokens from [Stage 3](#stage-3) to validate our tokens and further building an Abstract Syntax Tree for further analysis.

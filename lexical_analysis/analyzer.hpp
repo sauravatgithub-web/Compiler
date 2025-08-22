@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 #include <cctype>
 #include <fstream>
@@ -12,7 +13,9 @@
 #include "../automata/dfa.hpp"
 #include "../definitions.hpp"
 
-int main() {
+using Lexical_Ouptut = std::tuple<std::vector<Token>, SymbolTable, LiteralTable>;
+
+Lexical_Ouptut getTokens() {
     std::vector<std::pair<minimized_DFA, std::string>> fsms = create_state_machines();
 
     std::vector<State_Machine> machines; 
@@ -23,7 +26,7 @@ int main() {
     std::ifstream infile(CODE_SOURCE_FILE);
     if(!infile.is_open()) {
         std::cerr << "Failed to open code source file" << std::endl;
-        return 1;
+        std::exit(1);
     }
 
     SymbolTable symTable;
@@ -89,7 +92,5 @@ int main() {
         }
     }
 
-    for(Token token : token_sequence) std::cout << token << std::endl;
-
-    return 0;
+    return {token_sequence, symTable, litTable};
 }

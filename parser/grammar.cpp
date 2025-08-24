@@ -55,6 +55,11 @@ void Grammar::addTerminals(const std::string& line) {
     while(std::getline(ss, sym, ',')) {
         sym.erase(remove_if(sym.begin(), sym.end(), ::isspace), sym.end());
         if(!sym.empty()) {
+            if(sym == "$") {
+                terminals.push_back(EPSILON_SYMBOL);
+                symbolTable[sym] = EPSILON_SYMBOL;
+                continue;
+            }
             Symbol symbol = Symbol(sym, true);
             terminals.push_back(symbol);
             symbolTable[sym] = symbol;
@@ -80,5 +85,80 @@ void Grammar::createProductions(const std::string& line) {
             production.push_back(symbolTable[token]); 
         }
         productions[leftSymbol].push_back(production);
+    }
+}
+
+SymbolSet Grammar::makeFirstsUtility(Symbol sym) {
+    if(!first[sym].empty()) return first[sym];
+    
+    for(Production prod : productions[sym]) {
+        bool allNullable = true;
+
+        int size = prod.size();
+        for(int i = 0; i < size; i++) {
+            SymbolSet firstTerms = makeFirstsUtility(prod[i]);
+            for(Symbol s : firstTerms) {
+                if(!s.isEpsilon()) first[sym].insert(s);
+            }
+
+            if(firstTerms.find(EPSILON_SYMBOL) == firstTerms.end()) {
+                allNullable = false;
+                break;
+            }
+        }
+
+        if(!allNullable) first[sym].insert(EPSILON_SYMBOL);
+    }
+
+    return first[sym];
+}
+
+void Grammar::makeFirsts() {
+    for(Symbol term_sm : terminals) {
+        first[term_sm].insert(term_sm);
+    }
+
+    for(Symbol nonTerm_sym : nonTerminals) {
+        if(!first[nonTerm_sym].empty()) continue;
+        makeFirstsUtility(nonTerm_sym);
+    }
+}
+
+void Grammar::makeFollows() {
+    follow[startSymbol].insert(END_OF_INPUT_SYMBOL);
+
+    bool changed = true;
+    while(true) {
+        changed = false;
+
+        for(auto [sym, prods] : productions) {
+            for(Production p : prods) {
+                int size = p.size();
+
+                for(int i = 0; i < size; i++) {
+                    if(p[i].nature != Nature::NonTerminal) continue;
+
+                    bool allNullable = true;
+                    for(int j = i + 1; j < size; j++) {
+                        for(Symbol s : first[p[j]]) {
+                            if(!s.isEpsilon()) {
+                                if(follow[p[i]].insert(s).second) changed = true;
+                            }
+                        }
+
+                        if(first[p[j]].count(EPSILON_SYMBOL) == 0) {
+                            allNullable = false;
+                            break;
+                        }
+                    }
+
+                    if(i == size - 1 || allNullable) {
+                        for(Symbol s : follow[sym]) {
+                            if(follow[p[i]].insert(s).second) changed = true;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

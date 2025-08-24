@@ -15,6 +15,9 @@ int main() {
         std::exit(1);
     }
 
+    grammar.makeFirsts();
+    grammar.makeFollows();
+
     if(recursive_descent_procedure(grammar, tokens, 0) == -1) {
         std::cerr << "Parsing error" << std::endl;
         std::exit(1);

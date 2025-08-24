@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SRC="automata/*.cpp lexical_analysis/*.cpp parser/*.cpp"
+SRC="automata/*.cpp lexical_analysis/*.cpp syntax_analysis/*.cpp"
 
 echo "Compiling project..."
 g++ -std=c++17 -Wall -O2 $SRC -I. -o compiler

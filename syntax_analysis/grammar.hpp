@@ -8,7 +8,7 @@
 
 typedef std::vector<Symbol> Production;
 typedef std::unordered_set<Symbol, SymbolHash> SymbolSet;
-typedef std::unordered_map<std::pair<Symbol, Symbol>, Production, SymbolHash> ParseTable;
+typedef std::unordered_map<std::pair<Symbol, Symbol>, Production, SymbolPairHash> ParseTable;
 
 class Grammar {
 private:

@@ -20,7 +20,7 @@ SymbolSet Grammar::makeFirstsUtility(Symbol sym) {
             }
         }
 
-        if(!allNullable) first[sym].insert(EPSILON_SYMBOL);
+        if(allNullable) first[sym].insert(EPSILON_SYMBOL);
     }
 
     return first[sym];
@@ -73,6 +73,8 @@ void Grammar::makeFollows() {
                 }
             }
         }
+
+        if(!changed) break;
     }
 }
 

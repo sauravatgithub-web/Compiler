@@ -108,5 +108,28 @@ bool Grammar::LL1_parser(const std::vector<Token>& tokens) {
     ParseTable parseTable = create_parse_table();
 
     std::stack<Symbol> parserStack;
+    parserStack.push(END_OF_INPUT_SYMBOL);
     parserStack.push(startSymbol);
+    int index = 0;
+
+    while(!parserStack.empty()) {
+        std::cout << parserStack.size() << std::endl;
+        Symbol sym = parserStack.top();
+        parserStack.pop();
+
+        if(sym.name == tokens[index].type) {
+            index++;
+        }
+        else {
+            if(parseTable.find({sym, symbolTable[tokens[index].type]}) == parseTable.end()) return false;
+
+            Production production = parseTable[{sym, symbolTable[tokens[index].type]}];
+            int size = (int)production.size();
+            for(int i = size - 1; i >= 0; i--) {
+                if(!production[i].isEpsilon()) parserStack.push(production[i]);
+            }
+        }
+    }
+
+    return true;
 }

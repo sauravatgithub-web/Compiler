@@ -6,8 +6,9 @@
 #include "symbol.hpp"
 #include "lexical_analysis/token.hpp"
 
-using Production = std::vector<Symbol>;
-using SymbolSet = std::unordered_set<Symbol, SymbolHash>;
+typedef std::vector<Symbol> Production;
+typedef std::unordered_set<Symbol, SymbolHash> SymbolSet;
+typedef std::unordered_map<std::pair<Symbol, Symbol>, Production, SymbolHash> ParseTable;
 
 class Grammar {
 private:
@@ -32,4 +33,6 @@ public:
     void makeFirsts();
     SymbolSet makeFirstsUtility(Symbol sym);
     void makeFollows();
+    ParseTable create_parse_table();
+    bool LL1_parser(const std::vector<Token>& tokens);
 };

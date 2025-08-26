@@ -17,7 +17,8 @@ int main() {
     grammar.makeFirsts();
     grammar.makeFollows();
 
-    if(grammar.recursive_descent_parser(tokens) == -1) {
+    if(grammar.recursive_descent_parser(tokens)) std::cout << "Parsing completed successfully." << std::endl;
+    else {
         std::cerr << "Parsing error" << std::endl;
         std::exit(1);
     }

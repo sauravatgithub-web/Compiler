@@ -2,7 +2,6 @@
 #include <fstream>
 #include <vector>
 #include "grammar.hpp"
-#include "utility.hpp"
 #include "../definitions.hpp"
 #include "../lexical_analysis/analyzer.hpp"
 
@@ -18,7 +17,7 @@ int main() {
     grammar.makeFirsts();
     grammar.makeFollows();
 
-    if(recursive_descent_procedure(grammar, tokens, 0) == -1) {
+    if(grammar.recursive_descent_parser(tokens) == -1) {
         std::cerr << "Parsing error" << std::endl;
         std::exit(1);
     }

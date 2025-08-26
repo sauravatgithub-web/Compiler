@@ -65,6 +65,7 @@ void Grammar::addTerminals(const std::string& line) {
             symbolTable[sym] = symbol;
         }
     }
+    symbolTable["$"] = END_OF_INPUT_SYMBOL;
 }
 
 void Grammar::createProductions(const std::string& line) {

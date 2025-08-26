@@ -27,5 +27,13 @@ struct SymbolHash {
     }
 };
 
+struct SymbolPairHash {
+    std::size_t operator()(const std::pair<Symbol, Symbol>& spair) const {
+        std::size_t hashFirst = std::hash<std::string>()(spair.first.name) ^ (std::hash<int>()(static_cast<int>(spair.first.nature)) << 1);
+        std::size_t hashSecond = std::hash<std::string>()(spair.second.name) ^ (std::hash<int>()(static_cast<int>(spair.second.nature)) << 1);
+        return hashFirst ^ hashSecond;
+    }
+};
+
 inline const Symbol EPSILON_SYMBOL(EPSILON, true);
 inline const Symbol END_OF_INPUT_SYMBOL(END_OF_INPUT, true);

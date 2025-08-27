@@ -13,7 +13,7 @@
 #include "../automata/dfa.hpp"
 #include "../definitions.hpp"
 
-using Lexical_Ouptut = std::tuple<std::vector<Token>, SymbolTable, LiteralTable>;
+typedef std::tuple<std::vector<Token>, SymbolTable, LiteralTable> Lexical_Ouptut;
 
 Lexical_Ouptut getTokens() {
     std::vector<std::pair<minimized_DFA, std::string>> fsms = create_state_machines();
@@ -26,7 +26,7 @@ Lexical_Ouptut getTokens() {
     std::ifstream infile(CODE_SOURCE_FILE);
     if(!infile.is_open()) {
         std::cerr << "Failed to open code source file" << std::endl;
-        std::exit(1);
+        std::exit(EXIT_FAILURE);
     }
 
     SymbolTable symTable;
@@ -87,7 +87,7 @@ Lexical_Ouptut getTokens() {
             } 
             else {
                 std::cerr << "Lexical error at line " << line_counter << " index " << index << std::endl;
-                std::exit(1);
+                std::exit(EXIT_FAILURE);
             }
         }
     }

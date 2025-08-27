@@ -13,7 +13,8 @@ struct SymbolInfo {
 class SymbolTable {
 private:
     std::unordered_map<std::string, int> table;  
-    std::vector<SymbolInfo> symbols;             
+    std::vector<SymbolInfo> symbols;  
+               
 public:
     int addSymbol(const std::string &name) {
         if(table.find(name) != table.end()) {

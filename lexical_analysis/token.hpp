@@ -18,7 +18,7 @@ public:
     token_type type;
     std::string lexeme;
 
-    using ValueType = std::variant<std::monostate, int, double, long long, long double, std::string, char, bool>;
+    typedef std::variant<std::monostate, int, double, long long, long double, std::string, char, bool> ValueType;
     ValueType value = std::monostate{};
 
     int symbolTableIndex = -1;

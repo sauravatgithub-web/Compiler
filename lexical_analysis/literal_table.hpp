@@ -6,7 +6,7 @@
 #include <optional>
 #include <unordered_map>
 
-using Val = std::variant<int, double, long long, long double, char, std::string, bool>;
+typedef std::variant<int, double, long long, long double, char, std::string, bool> Val;
 
 enum class LiteralType {
     Integer, Floating, Character, String, Boolean

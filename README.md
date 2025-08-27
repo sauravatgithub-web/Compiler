@@ -5,6 +5,7 @@ This project attempts to build a compiler based on C++ programming language. The
     <li> The second stage involves building state diagram for each of the regex patterns. We will try to build a DFA for each regex pattern to be used in further stages. </li>
     <li> The third stage will perform lexical analysis of the code. In this part, we will try to generate token sequuences to be used in further stages. </li>
     <li> The fourth stage is defining grammar for our language. </li>
+    <li> The fifth stage will perform syntax analysis of the code. We will try to build parser to verify if our token sequence is syntactically correct.
 </ul>
 
 ## Stage 1
@@ -80,3 +81,39 @@ flowchart LR
 
 ## Stage 4
 We will define our grammar in [grammar.txt](sourceFiles/grammar.txt) file. Our 5<sup>th</sup> stage i.e. syntax analysis will use the grammar built in this stage and the tokens from [Stage 3](#stage-3) to validate our tokens and further building an Abstract Syntax Tree for further analysis.
+
+## Stage 5
+This stage involves [syntax_analysis](syntax_analysis) folder where we will take all tokens from the previous stages and match them with our grammar defined earlier. We will read our grammar from the [grammar.txt](sourceFiles/grammar.txt) file to make the grammar. For parsing, we will define different types of parser - **top-down parser** (recursive parser and LL1 parser) and **bottom-up parser**. 
+
+The folder structure of this stage is shown below :
+
+| File                         | Description                                                               | 
+|------------------------------|---------------------------------------------------------------------------| 
+| **grammar**                  | Defines Grammar class and related functions                               |
+| **parser.hpp**               | Entry file for stage 5 - recieves tokens and parse them                   |
+| **ll1_parsing.cpp**          | Utilizes LL(1) parsing technique to parse the tokens                      |
+| **rd_parsing.cpp**           | Utilizes recursive top-down parsing technique to parse through the tokens |
+| **symbol.hpp**               | Defines Symbol class                                                      |
+
+The work in this stage is described for all kinds of parser as below :
+- **Recursive Descent Parser**<br/>
+The basic idea of this kind of parser is recursively go through the grammar while iterating through the tokens and matching token_type and symbol. If a certain production fails, we will check the next production, if available. Removal of left recursion and left factoring is essential, otherwise, recursion may never stop.
+  - `recursive_descent_procedure` function collects all possible endings for the start symbol and check if any ending equals to string length to confirm correct parsing. 
+  - `recursive_descent_main_procedure` and `recursive_descent_procedure` assist in recursion steps for this parser. 
+  - Say, A -> BC is a production, then recursively we will find all possible endings from B. Then all those endings will serve as starting point for C. This way, we will calculate for all productions from the start symbol.
+- **LL(1) Parser**<br/>
+This kind of parser utilizes FIRST and FOLLOW of non-terminal symbols to generate parse table. Parse table simplifies the task of selecting production by assigning one production to each unique set of non terminal and terminal symbol. Now, it's important to understand that not all kinds of grammar can be parsed by this method because left recursion can be a problem. Removal of left recursion and left factoring is essential. Further, input token, parse table and stack is used to parse and produce output. The parsing fails if, for a given non-terminal and terminal symbol, no production exists or not all tokens are parsed.
+  - `makeFirsts` and `makeFollow` function are used to build FIRST and FOLLOW for each non terminal.
+  - `create_parse_table` function builds up the parse table.
+  - `LL1_Parser` function is the main parser function which utilizes stack to verify tokens.
+
+The work flow diagram in this stage looks as below :- 
+```mermaid
+flowchart LR
+    GT[grammar.txt] --> P[parser.hpp]
+    S[symbol.hpp] --> GH[grammar.hpp]
+    GH --> P
+    GC[grammar.cpp] --> GH
+    RDP[rd_parsing.cpp] --> GH
+    LL1P[ll1_parsing.cpp] --> GH
+```

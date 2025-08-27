@@ -6,7 +6,7 @@
 #include "nfa.hpp"
 #include "automata.hpp"
 
-using StateTransitions = std::map<std::pair<State, std::string>, std::set<State>>;
+typedef std::map<std::pair<State, std::string>, std::set<State>> StateTransitions;
 
 class minimized_DFA : public Automata {
 public:

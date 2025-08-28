@@ -1,23 +1,44 @@
-NON-TERMINATING SYMBOLS : START, smts_list, smts, decl, decl_tail, assign, func_call, args, more_args, expr, rel_expr, log_expr, add_expr, mul_expr, unary, primary, condsmts, elifcond, elscond, whileloop, forloop, function, params, extra_params, return_stmt, datatype
-TERMINATING SYMBOLS : id, int_lit, doub_lit, char_lit, str_lit, relop, aop, bop, lop, assignop, end, fas, fae, cbs, cbe, larrow, rarrow, scrop, comma, $, if, else, while, for, integer, double, character, string, bool, return
+NON-TERMINATING SYMBOLS : START, smts_list, smts, decl, decl_tail, assign, func_call, args, more_args, expr, rel_expr, rel_expr', log_expr, log_expr', add_expr, add_expr', mul_expr, mul_expr', unary, primary, condsmts, elifcond, elscond, whileloop, forloop, func_spec, func, main_func, params, extra_params, return_stmt, datatype, type_head, type_tail, func_decl, func_decl_tail, func_decl_tailsq, assign_or_func_call, assign_or_func_call_tail, io_stmt, i_stmt, o_stmt, o_stmt', io_stmt_tail, o_out, i_out, o_out', i_out', o_item, id_func, id_func', endl_opt
+TERMINATING SYMBOLS : id, int_lit, doub_lit, char_lit, str_lit, relop, aop, bop, lop, assignop, end, fas, fae, cbs, cbe, larrow, rarrow, scrop, comma, $, if, else, while, for, int, double, char, string, bool, return, main, long, ε, std, cout, cin, larrow, rarrow, dlarrow, drarrow, endl
 
 PRODUCTIONS : 
 START -> smts_list
 
 smts_list -> smts smts_list | ε
-smts -> decl end | assign end | function | func_call end | condsmts | whileloop | forloop | cbs smts_list cbe | return_stmt end
-datatype -> integer | double | character | string | bool
+smts -> func_decl | assign_or_func_call | condsmts | whileloop | forloop | cbs smts_list cbe | return_stmt end | io_stmt end
 
-decl -> datatype id decl_tail
-decl_tail -> assignop expr | ε
+io_stmt -> std scrop io_stmt_tail
+io_stmt_tail -> cout dlarrow o_stmt endl_opt | cin i_stmt
+o_stmt -> o_item o_stmt' | ε
+o_stmt' -> dlarrow o_item o_stmt' | ε
+i_stmt -> drarrow id i_stmt'
+i_stmt' -> drarrow id i_stmt' | ε
+o_item -> int_lit | doub_lit | char_lit | str_lit | id_func | ε
+id_func -> id id_func'
+id_func' -> fas args fae | ε 
+endl_opt -> std scrop endl | ε
 
-assign -> id assignop expr 
+datatype -> type_head type_tail
+type_head -> int | double | char | string | bool | long
+type_tail -> double | long | ε
 
-function -> datatype id fas params fae cbs smts_list cbe
+func_decl -> datatype func_decl_tail
+func_decl_tail -> main main_func | id func_decl_tailsq
+func_decl_tailsq -> fas func | decl end
+
+decl -> assignop expr | ε
+
+main_func -> fas params fae cbs smts_list cbe 
+func -> params fae cbs smts_list cbe
 params -> datatype id extra_params | ε
 extra_params -> comma datatype id extra_params | ε
 
-func_call -> id fas args fae
+assign_or_func_call -> id assign_or_func_call_tail
+assign_or_func_call_tail -> assignop assign | fas func_call
+
+assign -> assignop expr end
+
+func_call -> args fae end
 args -> expr more_args | ε
 more_args -> comma expr more_args | ε
 
@@ -44,6 +65,6 @@ add_expr'   -> aop mul_expr add_expr' | ε
 mul_expr    -> unary mul_expr'
 mul_expr'   -> bop unary mul_expr' | ε
 unary       -> aop unary | primary
-primary     -> id | int_lit | doub_lit | char_lit | str_lit | fas expr fae | func_call
+primary     -> id | int_lit | doub_lit | char_lit | str_lit | fas expr fae
 
 START SYMBOL : START

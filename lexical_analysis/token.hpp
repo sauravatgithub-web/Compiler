@@ -8,9 +8,9 @@
 #include "literal_table.hpp"
 
 enum class token_type { 
-    _integer, _id, _if, _then, _else, _relop, _int, _float, _bool, _string, _char, _double, _vector, _set, _map,
-    _while, _std, _cout, _cin, _aop, _bop, _lop, _assign, _end, _return, _fas, _fae, _cbs, _cbe, _scrop, _comma,
-    _uset, _umap
+    _integer, _id, _if, _then, _else, _relop, _int, _float, _bool, _string, _character, _double, _vector, _set, _map,
+    _while, _std, _cout, _cin, _aop, _bop, _lop, _assignop, _end, _return, _fas, _fae, _cbs, _cbe, _scrop, _comma,
+    _uset, _umap, _int_lit, _doub_lit, _char_lit, _str_lit
 };
 
 class Token {

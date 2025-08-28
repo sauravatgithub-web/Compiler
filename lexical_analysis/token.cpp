@@ -97,6 +97,10 @@ std::ostream& operator<<(std::ostream& os, const token_type& t) {
         case token_type::_scrop:       os << "scrop";       break;
         case token_type::_uset:        os << "u_set";       break;
         case token_type::_umap:        os << "u_map";       break;
+        case token_type::_int_lit:     os << "int_lit";     break;
+        case token_type::_doub_lit:    os << "doub_lit";    break;
+        case token_type::_char_lit:    os << "char_lit";    break;
+        case token_type::_str_lit:     os << "str_lit";     break;
     }
     return os;
 }

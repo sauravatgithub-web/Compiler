@@ -1,6 +1,6 @@
 // automata
 
-inline const std::string EPSILON = "ε"; 
+#define EPSILON "ε"
 #define NULL_STATE -1
 #define REGEX_SOURCE_FILE "sourceFiles/regex.txt"
 
@@ -10,5 +10,5 @@ inline const std::string EPSILON = "ε";
 
 // parser
 
-inline const std::string END_OF_INPUT = "$";
+#define END_OF_INPUT "$"
 #define GRAMMAR_SOURCE_FILE "sourceFiles/grammar.txt"

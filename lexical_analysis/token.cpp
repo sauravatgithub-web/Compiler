@@ -4,15 +4,16 @@
 #include "token.hpp"
 
 std::unordered_set<std::string> keywords = { 
-    "if", "then", "else", "int", "float", "bool", "string", "double", "while", "return", "vector", "set", "map", "std", "cout", "character",
-    "unordered_set", "unordered_map", "cin", "cout" 
+    "if", "then", "else", "int", "float", "bool", "string", "double", "while", "return", "vector", "set", "map", "std", "cout", "char",
+    "unordered_set", "unordered_map", "cin", "cout", "main", "long" , "endl"
 };
 
 std::unordered_map<std::string, token_type> keyWordMap = {
     { "if", token_type::_if }, { "then", token_type::_then }, { "else", token_type::_else }, { "int", token_type::_int }, 
     { "float", token_type::_float }, { "bool", token_type::_bool }, { "string", token_type::_string }, { "double", token_type::_double },
     { "while", token_type::_while }, { "return", token_type::_return }, { "std", token_type::_std }, { "cout", token_type::_cout }, { "cin", token_type::_cin },
-    { "character", token_type::_character }, { "set", token_type::_set }, { "map", token_type::_map }, { "unordered_set", token_type::_uset }, { "unordered_map", token_type::_umap }
+    { "char", token_type::_char }, { "set", token_type::_set }, { "map", token_type::_map }, { "unordered_set", token_type::_uset }, 
+    { "unordered_map", token_type::_umap }, { "main", token_type::_main }, { "long", token_type::_long }, { "endl", token_type::_endl }
 };
 
 void token_creator(const std::string& chars, const std::string machine, SymbolTable& symTable, LiteralTable& litTable, std::vector<Token>& token_sequence) {
@@ -50,7 +51,7 @@ void token_creator(const std::string& chars, const std::string machine, SymbolTa
     else if(machine == "relop"    )  token = Token(token_type::_relop,    chars);
     else if(machine == "aop"      )  token = Token(token_type::_aop,      chars);
     else if(machine == "bop"      )  token = Token(token_type::_bop,      chars);
-    else if(machine == "assign"   )  token = Token(token_type::_assignop, chars);
+    else if(machine == "assignop" )  token = Token(token_type::_assignop, chars);
     else if(machine == "end"      )  token = Token(token_type::_end,      chars);
     else if(machine == "fas"      )  token = Token(token_type::_fas,      chars);
     else if(machine == "fae"      )  token = Token(token_type::_fae,      chars);
@@ -58,6 +59,10 @@ void token_creator(const std::string& chars, const std::string machine, SymbolTa
     else if(machine == "cbe"      )  token = Token(token_type::_cbe,      chars);
     else if(machine == "scrop"    )  token = Token(token_type::_scrop,    chars);
     else if(machine == "comma"    )  token = Token(token_type::_comma,    chars);
+    else if(machine == "larrow"   )  token = Token(token_type::_larrow,   chars);
+    else if(machine == "rarrow"   )  token = Token(token_type::_rarrow,   chars);
+    else if(machine == "dlarrow"  )  token = Token(token_type::_dlarrow,  chars);
+    else if(machine == "drarrow"  )  token = Token(token_type::_drarrow,  chars);
     
     token_sequence.push_back(token);
 }
@@ -78,7 +83,7 @@ std::ostream& operator<<(std::ostream& os, const token_type& t) {
         case token_type::_float:       os << "float";       break;
         case token_type::_bool:        os << "bool";        break;
         case token_type::_string:      os << "string";      break;
-        case token_type::_character:   os << "character";   break;
+        case token_type::_char:        os << "char";        break;
         case token_type::_double:      os << "double";      break;
         case token_type::_while:       os << "while";       break;
         case token_type::_return:      os << "return";      break;
@@ -101,6 +106,14 @@ std::ostream& operator<<(std::ostream& os, const token_type& t) {
         case token_type::_doub_lit:    os << "doub_lit";    break;
         case token_type::_char_lit:    os << "char_lit";    break;
         case token_type::_str_lit:     os << "str_lit";     break;
+        case token_type::_main:        os << "main";        break;
+        case token_type::_long:        os << "long";        break;
+        case token_type::_dollar:      os << "$";           break;
+        case token_type::_larrow:      os << "larrow";      break;
+        case token_type::_rarrow:      os << "rarrow";      break;
+        case token_type::_dlarrow:     os << "dlarrow";     break;
+        case token_type::_drarrow:     os << "drarrow";     break;
+        case token_type::_endl:        os << "endl";        break;
     }
     return os;
 }

@@ -1,7 +1,49 @@
-Non-terminating Symbols : A, A'
-Terminating Symbols : c, d, $
-Productions : 
-START -> A
-A -> c A'
-A' -> d A' | $
-Start Symbol : A
+NON-TERMINATING SYMBOLS : START, smts_list, smts, decl, decl_tail, assign, func_call, args, more_args, expr, rel_expr, log_expr, add_expr, mul_expr, unary, primary, condsmts, elifcond, elscond, whileloop, forloop, function, params, extra_params, return_stmt, datatype
+TERMINATING SYMBOLS : id, int_lit, doub_lit, char_lit, str_lit, relop, aop, bop, lop, assignop, end, fas, fae, cbs, cbe, larrow, rarrow, scrop, comma, $, if, else, while, for, integer, double, character, string, bool, return
+
+PRODUCTIONS : 
+START -> smts_list
+
+smts_list -> smts smts_list | ε
+smts -> decl end | assign end | function | func_call end | condsmts | whileloop | forloop | cbs smts_list cbe | return_stmt end
+datatype -> integer | double | character | string | bool
+
+decl -> datatype id decl_tail
+decl_tail -> assignop expr | ε
+
+assign -> id assignop expr 
+
+function -> datatype id fas params fae cbs smts_list cbe
+params -> datatype id extra_params | ε
+extra_params -> comma datatype id extra_params | ε
+
+func_call -> id fas args fae
+args -> expr more_args | ε
+more_args -> comma expr more_args | ε
+
+condsmts -> if fas expr fae cbs smts_list cbe elifcond elscond
+elifcond -> else if fas expr fae cbs smts_list cbe elifcond | ε
+elscond -> else cbs smts_list cbe | ε
+
+whileloop -> while fas expr fae cbs smts_list cbe
+
+forloop -> for fas for_init end for_cond end for_step fae cbs smts_list cbe
+for_init -> decl | assign | ε
+for_cond -> expr | ε
+for_step -> assign | func_call | ε
+
+return_stmt -> return expr
+
+expr        -> log_expr
+log_expr    -> rel_expr log_expr'
+log_expr'   -> lop rel_expr log_expr' | ε
+rel_expr    -> add_expr rel_expr'
+rel_expr'   -> relop add_expr rel_expr' | ε
+add_expr    -> mul_expr add_expr'
+add_expr'   -> aop mul_expr add_expr' | ε
+mul_expr    -> unary mul_expr'
+mul_expr'   -> bop unary mul_expr' | ε
+unary       -> aop unary | primary
+primary     -> id | int_lit | doub_lit | char_lit | str_lit | fas expr fae | func_call
+
+START SYMBOL : START

@@ -4,7 +4,6 @@
 #include <unordered_set>
 #include <unordered_map>
 #include "symbol.hpp"
-#include "lexical_analysis/token.hpp"
 
 typedef std::vector<Symbol> Production;
 typedef std::unordered_set<Symbol, SymbolHash> SymbolSet;
@@ -15,6 +14,7 @@ private:
     std::vector<Symbol> terminals;
     std::vector<Symbol> nonTerminals;
     std::unordered_map<std::string, Symbol> symbolTable;
+
 public:
     Symbol startSymbol;
     std::unordered_map<Symbol, std::vector<Production>, SymbolHash> productions;
@@ -25,6 +25,11 @@ public:
     void addNonTerminals(const std::string& line);
     void addTerminals(const std::string& line);
     void createProductions(const std::string& line);
+
+    void print() {
+        std::cout << "hello from grammar" << std::endl;
+        for(auto s : terminals) std::cout << s.name << std::endl;
+    }
 
     bool recursive_descent_parser(const std::vector<Token>& tokens);
     std::vector<int> recursive_descent_main_procedure(const Symbol& sym, const std::vector<Token>& tokens, int index);

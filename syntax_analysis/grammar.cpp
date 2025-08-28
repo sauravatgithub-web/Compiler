@@ -16,14 +16,15 @@ int Grammar::create() {
     while(std::getline(infile, line)) {
         if(line.empty()) continue;
 
-        if(line.find("Non-terminating Symbols") != std::string::npos) {
+        if(line.find("NON-TERMINATING SYMBOLS") != std::string::npos) {
             addNonTerminals(line);
         }
-        else if(line.find("Terminating Symbols") != std::string::npos) {
+        else if(line.find("TERMINATING SYMBOLS") != std::string::npos) {
             addTerminals(line);
         }
-        else if(line.find("Productions") != std::string::npos) {
-            while(std::getline(infile, line) && !line.empty() && line.find("Start Symbol") == std::string::npos) {
+        else if(line.find("PRODUCTIONS") != std::string::npos) {
+            while(std::getline(infile, line) && line.find("START SYMBOL") == std::string::npos) {
+                if(line.empty()) continue;
                 createProductions(line);
             }
         }

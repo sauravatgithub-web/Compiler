@@ -7,7 +7,7 @@ int main() {
     long long a = 23;
     double b = 2.33;
     string c = "Saurav";
-    long double = 3.4E+2;
+    long double d = 3.4E+2;
     char e = 'v';
     std::cout << sum(a, b) << std::endl;  // prints sum of two numbers
 

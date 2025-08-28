@@ -1,6 +1,7 @@
 # pragma once
 
 #include <string>
+#include "symbolMap.hpp"
 #include "../definitions.hpp"
 
 enum class Nature { Terminal, NonTerminal };
@@ -9,10 +10,13 @@ class Symbol {
 public:
     std::string name;
     Nature nature;
+    token_type type;
     
     Symbol() = default;
     Symbol(std::string sym, bool isTerminal) 
-        : name(sym), nature(isTerminal ? Nature::Terminal : Nature::NonTerminal) {}
+        : name(sym), nature(isTerminal ? Nature::Terminal : Nature::NonTerminal) {
+            if(isTerminal) type = nameType[sym];
+        }
 
     bool operator==(const Symbol& other) const {
         return name == other.name && nature == other.nature;

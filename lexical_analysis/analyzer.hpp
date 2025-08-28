@@ -92,5 +92,6 @@ Lexical_Ouptut getTokens() {
         }
     }
 
+    token_sequence.push_back(Token(token_type::_dollar, "$"));
     return {token_sequence, symTable, litTable};
 }

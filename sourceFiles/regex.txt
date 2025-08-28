@@ -1,11 +1,11 @@
 id        : \( _ \| letter \) \. \( _ \| letter \| digit \) \*
-double    : \( digit \+ \) \. \( . \. \( digit \+ \) \) \? \. \( \( E \| e \) \. \( + \| - \) \? \. \( digit \+ \) \) \?
-integer   : \( digit \+ \)
+doub_lit  : \( digit \+ \) \. \( . \. \( digit \+ \) \) \? \. \( \( E \| e \) \. \( + \| - \) \? \. \( digit \+ \) \) \?
+int_lit   : \( digit \+ \)
 relop     : < \| > \| < \. = \| > \. = \| = \. = \| ! \. =
 aop       : + \| - \| * \| / \| %
 bop       : & \| | \| ^ \| ~ \| \( < \. < \) \| \( > \. > \)
 lop       : \( & \. & \) \| \( | \. | \)
-assign    : = \| \( \( + \| - \| * \| / \| % \| & \| | \| ^ \) \. = \) \| \( \( \( < \. < \) \| \( > \. > \) \) \. = \)
+assignop  : = \| \( \( + \| - \| * \| / \| % \| & \| | \| ^ \) \. = \) \| \( \( \( < \. < \) \| \( > \. > \) \) \. = \)
 ws        : white_space \. \( white_space \) \*
 end       : ;
 fas       : (
@@ -16,5 +16,5 @@ larrow    : <
 rarrow    : >
 scrop     : : \. :
 comma     : ,
-character : ' \. char \. '
-string    : " \. \( char \) \* \. "
+char_lit  : ' \. char \. '
+str_lit   : " \. \( char \) \* \. "

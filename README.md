@@ -94,6 +94,7 @@ The folder structure of this stage is shown below :
 | **ll1_parsing.cpp**          | Utilizes LL(1) parsing technique to parse the tokens                      |
 | **rd_parsing.cpp**           | Utilizes recursive top-down parsing technique to parse through the tokens |
 | **symbol.hpp**               | Defines Symbol class                                                      |
+| **symbolMap.hpp**            | Defines two maps - one from symbol to token and other from vice versa     |
 
 The work in this stage is described for all kinds of parser as below :
 - **Recursive Descent Parser**<br/>
@@ -111,7 +112,8 @@ The work flow diagram in this stage looks as below :-
 ```mermaid
 flowchart LR
     GT[grammar.txt] --> P[parser.hpp]
-    S[symbol.hpp] --> GH[grammar.hpp]
+    SM[symbolMap.hpp] --> S[symbol.hpp]
+    S --> GH[grammar.hpp]
     GH --> P
     GC[grammar.cpp] --> GH
     RDP[rd_parsing.cpp] --> GH

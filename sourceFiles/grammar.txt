@@ -1,5 +1,5 @@
 NON-TERMINATING SYMBOLS : START, smts_list, smts, decl, decl_tail, assign, func_call, args, more_args, expr, rel_expr, rel_expr', log_expr, log_expr', add_expr, add_expr', mul_expr, mul_expr', unary, primary, condsmts, elifcond, elscond, whileloop, forloop, func_spec, func, main_func, params, extra_params, return_stmt, datatype, type_head, type_tail, func_decl, func_decl_tail, func_decl_tailsq, assign_or_func_call, assign_or_func_call_tail, io_stmt, i_stmt, o_stmt, o_stmt', io_stmt_tail, o_out, i_out, o_out', i_out', o_item, id_func, id_func', endl_opt
-TERMINATING SYMBOLS : id, int_lit, doub_lit, char_lit, str_lit, relop, aop, bop, lop, assignop, end, fas, fae, cbs, cbe, larrow, rarrow, scrop, comma, $, if, else, while, for, int, double, char, string, bool, return, main, long, ε, std, cout, cin, larrow, rarrow, dlarrow, drarrow, endl
+TERMINATING SYMBOLS : id, int_lit, doub_lit, char_lit, str_lit, relop, aop, bop, lop, assignop, end, fas, fae, cbs, cbe, larrow, rarrow, scrop, comma, if, else, while, for, int, double, char, string, bool, return, main, long, std, cout, cin, larrow, rarrow, dlarrow, drarrow, endl
 
 PRODUCTIONS : 
 START -> smts_list

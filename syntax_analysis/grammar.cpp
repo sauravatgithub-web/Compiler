@@ -50,15 +50,19 @@ void Grammar::addNonTerminals(const std::string& line) {
 }
 
 void Grammar::addTerminals(const std::string& line) {
+    symbolTable[EPSILON] = EPSILON_SYMBOL;
+    symbolTable[END_OF_INPUT] = END_OF_INPUT_SYMBOL;
+    terminals.push_back(EPSILON_SYMBOL);
+    terminals.push_back(END_OF_INPUT_SYMBOL);
+
     std::string symbols = line.substr(line.find(":") + 1);
     std::stringstream ss(symbols);
     std::string sym;
     while(std::getline(ss, sym, ',')) {
         sym.erase(remove_if(sym.begin(), sym.end(), ::isspace), sym.end());
         if(!sym.empty()) {
-            if(sym == "$") {
+            if(sym == EPSILON) {
                 terminals.push_back(EPSILON_SYMBOL);
-                symbolTable[sym] = EPSILON_SYMBOL;
                 continue;
             }
             Symbol symbol = Symbol(sym, true);
@@ -66,7 +70,6 @@ void Grammar::addTerminals(const std::string& line) {
             symbolTable[sym] = symbol;
         }
     }
-    symbolTable["$"] = END_OF_INPUT_SYMBOL;
 }
 
 void Grammar::createProductions(const std::string& line) {

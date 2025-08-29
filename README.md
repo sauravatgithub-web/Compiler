@@ -9,7 +9,7 @@ This project attempts to build a compiler based on C++ programming language. The
 </ul>
 
 ## Stage 1
-We will define our regex in [regex.txt](sourceFiles/regex.txt) file. 2<sup>nd</sup> stage will use this grammar patterns to build various state machines. It is important that the grammar is defined correctly using **concatenation** `.`, **or** `|`, **Kleen's closure** `*`, **optional** `?` and **Kleen's plus** operator `+`, all at correct places to ensure desired output. To include a wide range of inputs, operators are preceded by `\` as `\.`, `\|`, `\?` or `\*`. Even `(` as operator must be written as `\(` and `)` as `\)`. It will be better if spacing are appropriately added while defining the regular expressions, however, it is not necessary. The structure for grammar statement is : 
+We will define our regex in [regex.txt](sourceFiles/regex.txt) file. 2<sup>nd</sup> stage will use this regex patterns to build various state machines. It is important that the regular expressions are defined correctly using **concatenation** `.`, **or** `|`, **Kleen's closure** `*`, **optional** `?` and **Kleen's plus** operator `+`, all at correct places to ensure desired output. To include a wide range of inputs, operators are preceded by `\` as `\.`, `\|`, `\?` or `\*`. Even `(` as operator must be written as `\(` and `)` as `\)`. It will be better if spacing are appropriately added while defining the regular expressions, however, it is not necessary. The structure for regex statement is : 
 ```
 token_name : expression
 Eg: digits : digit \. \( digit \) \*
@@ -80,7 +80,19 @@ flowchart LR
 ```
 
 ## Stage 4
-We will define our grammar in [grammar.txt](sourceFiles/grammar.txt) file. Our 5<sup>th</sup> stage i.e. syntax analysis will use the grammar built in this stage and the tokens from [Stage 3](#stage-3) to validate our tokens and further building an Abstract Syntax Tree for further analysis.
+We will define our grammar in [grammar.txt](sourceFiles/grammar.txt) file. Our 5<sup>th</sup> stage i.e. syntax analysis will use the grammar built in this stage and the tokens from [Stage 3](#stage-3) to validate our tokens and further building an Abstract Syntax Tree for further analysis. Definition should carefully exclude all left recursions and left factoring, since it causes conflict in **recursive descent** and **LL1** parsing.
+
+The current draft of grammar supports function declarations and calls, conditional statements, loops, return statements, int, long, char and string datatypes, and input and output statements. 
+
+The structure (and sample) for our grammar file is as below :-
+```
+NON-TERMINATING SYMBOLS : A, B
+TERMINATING SYMBOLS : a, b
+PRODUCTIONS : 
+A -> aA | bB
+B -> ab
+START SYMBOL : A
+```
 
 ## Stage 5
 This stage involves [syntax_analysis](syntax_analysis) folder where we will take all tokens from the previous stages and match them with our grammar defined earlier. We will read our grammar from the [grammar.txt](sourceFiles/grammar.txt) file to make the grammar. For parsing, we will define different types of parser - **top-down parser** (recursive parser and LL1 parser) and **bottom-up parser**. 

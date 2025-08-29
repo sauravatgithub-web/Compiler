@@ -3,7 +3,7 @@
 bool Grammar::recursive_descent_parser(const std::vector<Token>& tokens) {
     std::vector<int> results = recursive_descent_main_procedure(startSymbol, tokens, 0);
     for(int idx : results) {
-        if(idx == (int)tokens.size()) return true;
+        if(tokens[idx].type == token_type::_dollar) return true;
     }
     return false;
 }
@@ -32,7 +32,7 @@ std::vector<int> Grammar::recursive_descent_procedure(const Production& prod, co
                 next_indices.insert(next_indices.end(), subresults.begin(), subresults.end());
             }
             else {
-                if(idx < (int)tokens.size() && tokens[idx].lexeme == next_sym.name) {
+                if(idx < (int)tokens.size() && tokens[idx].type == next_sym.type) {
                     next_indices.push_back(idx + 1);
                 }
             }

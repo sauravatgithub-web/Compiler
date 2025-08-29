@@ -7,15 +7,12 @@
 
 int main() {    
     auto [tokens, symTable, litTable] = getTokens();
-    for(Token token : tokens) std::cout << token << std::endl;
+    // for(Token token : tokens) std::cout << token << std::endl;
 
     Grammar grammar;  
     if(grammar.create() == -1) {
         std::exit(EXIT_FAILURE);
     }
-    // std::cout << "hello" << std::endl;
-    // grammar.print();
-    // std::cout << "hello" << std::endl;
 
     grammar.makeFirsts();
     grammar.makeFollows();

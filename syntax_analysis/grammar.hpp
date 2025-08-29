@@ -26,11 +26,6 @@ public:
     void addTerminals(const std::string& line);
     void createProductions(const std::string& line);
 
-    void print() {
-        std::cout << "hello from grammar" << std::endl;
-        for(auto s : terminals) std::cout << s.name << std::endl;
-    }
-
     bool recursive_descent_parser(const std::vector<Token>& tokens);
     std::vector<int> recursive_descent_main_procedure(const Symbol& sym, const std::vector<Token>& tokens, int index);
     std::vector<int> recursive_descent_procedure(const Production& prod, const std::vector<Token> tokens, int index);

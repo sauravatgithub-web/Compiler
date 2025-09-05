@@ -95,7 +95,7 @@ START SYMBOL : A
 ```
 
 ## Stage 5
-This stage involves [syntax_analysis](syntax_analysis) folder where we will take all tokens from the previous stages and match them with our grammar defined earlier. We will read our grammar from the [grammar.txt](sourceFiles/grammar.txt) file to make the grammar. For parsing, we will define different types of parser - **top-down parser** (recursive parser and LL1 parser) and **bottom-up parser**. 
+This stage involves [syntax_analysis](syntax_analysis) folder where we will take all tokens from the previous stages and match them with our grammar defined earlier. We will read our grammar from the [grammar.txt](sourceFiles/grammar.txt) file to make the grammar. For parsing, we will define different types of parser - **top-down parser** (recursive parser and LL1 parser) and **bottom-up parser** (LR0 parser, SLR(1) parser). 
 
 The folder structure of this stage is shown below :
 
@@ -105,6 +105,7 @@ The folder structure of this stage is shown below :
 | **parser.hpp**               | Entry file for stage 5 - recieves tokens and parse them                   |
 | **ll1_parsing.cpp**          | Utilizes LL(1) parsing technique to parse the tokens                      |
 | **rd_parsing.cpp**           | Utilizes recursive top-down parsing technique to parse through the tokens |
+| **lr0_parsing.cpp**          | Utilizes LR(0) parsing technique to parse the tokens                      |
 | **symbol.hpp**               | Defines Symbol class                                                      |
 | **symbolMap.hpp**            | Defines two maps - one from symbol to token and other from vice versa     |
 
@@ -119,6 +120,14 @@ This kind of parser utilizes FIRST and FOLLOW of non-terminal symbols to generat
   - `makeFirsts` and `makeFollow` function are used to build FIRST and FOLLOW for each non terminal.
   - `create_parse_table` function builds up the parse table.
   - `LL1_Parser` function is the main parser function which utilizes stack to verify tokens.
+- **LR(0) Parser**<br/>
+This is a kind of bottom-up parser and utilizes 0 lookahead to parse. An automation is required to decide actions to be taken at any stage of parsing. However, these kind of parsers are victims of Shift-Reduce and Reduce-Reduce conflicts. Here, in the implementation, we have ignored this. The parsing fails if we can perform neither shift nor reduce at any stage.
+  - `createLR0Automation` function is used for building the automation.
+  - `LR0_Parser` function is the main parser function which utilizes stack to verify tokens.
+- **SLR(1) Parser**<br/>
+This is a king of bottom-up parser and utilizes FOLLOW lookahead to parse. Almost similar to LR(0) variant. There are pitfalls, howerver, not all grammars can be resolved. Here, in the implementation, we have ignored this. The parsing fails if we can perform neither shift nor reduce at any stage.
+  - `createLR0Automation` function is used for building the automation.
+  - `SLR1_Parser` function is the main parser function which utilizes stack to verify tokens.
 
 The work flow diagram in this stage looks as below :- 
 ```mermaid
@@ -130,4 +139,5 @@ flowchart LR
     GC[grammar.cpp] --> GH
     RDP[rd_parsing.cpp] --> GH
     LL1P[ll1_parsing.cpp] --> GH
+    LR0P[lr0_parsing.cpp] --> GH
 ```

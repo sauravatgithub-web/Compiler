@@ -31,6 +31,7 @@ int Grammar::create() {
     }
 
     startSymbol = symbolTable["START"];
+    preStartSymbol = symbolTable["PRE_START"];
 
     return 0;
 }
@@ -47,6 +48,10 @@ void Grammar::addNonTerminals(const std::string& line) {
             symbolTable[sym] = symbol;
         }
     }
+
+    Symbol pre_start = Symbol("PRE_START", false);
+    nonTerminals.push_back(pre_start);
+    symbolTable["PRE_START"] = pre_start;
 }
 
 void Grammar::addTerminals(const std::string& line) {
@@ -91,4 +96,6 @@ void Grammar::createProductions(const std::string& line) {
         }
         productions[leftSymbol].push_back(production);
     }
+
+    productions[symbolTable["PRE_START"]].push_back({symbolTable["START"]});
 }

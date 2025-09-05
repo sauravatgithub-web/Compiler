@@ -39,5 +39,12 @@ struct SymbolPairHash {
     }
 };
 
+struct SymbolIntHash {
+    std::size_t operator()(const std::pair<int, Symbol>& spair) const {
+        std::size_t hash = std::hash<std::string>()(spair.second.name) ^ (std::hash<int>()(static_cast<int>(spair.second.nature)) << 1);
+        return spair.first ^ hash;
+    }
+};
+
 inline const Symbol EPSILON_SYMBOL(EPSILON, true);
 inline const Symbol END_OF_INPUT_SYMBOL(END_OF_INPUT, true);

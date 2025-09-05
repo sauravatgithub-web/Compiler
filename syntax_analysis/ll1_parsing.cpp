@@ -78,8 +78,8 @@ void Grammar::makeFollows() {
     }
 }
 
-ParseTable Grammar::create_parse_table() {
-    ParseTable parseTable;
+LL1_ParseTable Grammar::create_parse_table() {
+    LL1_ParseTable parseTable;
 
     for(auto [sym, symbolProductions] : productions) {
         if(sym.nature == Nature::Terminal) continue;
@@ -105,7 +105,7 @@ ParseTable Grammar::create_parse_table() {
 }
 
 bool Grammar::LL1_parser(const std::vector<Token>& tokens) {
-    ParseTable parseTable = create_parse_table();
+    LL1_ParseTable parseTable = create_parse_table();
 
     std::stack<Symbol> parserStack;
     parserStack.push(END_OF_INPUT_SYMBOL);
@@ -115,7 +115,6 @@ bool Grammar::LL1_parser(const std::vector<Token>& tokens) {
     while(!parserStack.empty()) {
         Symbol sym = parserStack.top();
         parserStack.pop();
-        std::cout << "1. " << sym.name << " " << "2. " << tokens[index].type << std::endl;
 
         if(sym.nature == Nature::Terminal && sym.type == tokens[index].type) {
             index++;

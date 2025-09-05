@@ -1,34 +1,7 @@
-#include <set>
 #include <map>
 #include <stack>
 #include <queue>
 #include "grammar.hpp"
-
-void Grammar::closure(LR_State& state) {
-    bool changed = true;
-    while(changed) {
-        changed = false;
-
-        for(auto& [symbol, index, pos] : state) {
-            if(pos != productions[symbol][index].size()) {
-                Symbol nextSym = productions[symbol][index][pos];
-
-                if(nextSym.nature == Nature::NonTerminal) {
-                    int size = productions[nextSym].size();
-
-                    for(int i = 0; i < size; i++) {
-                        Item newItem = {nextSym, i, 0};
-
-                        if(!state.count(newItem)) {
-                            changed = true;
-                            state.insert(newItem);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 std::tuple<LR_Automation, StateIndexMap, IndexStateMap> Grammar::createLR0Automation() {
     LR_Automation LR0_Automation;

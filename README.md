@@ -101,11 +101,14 @@ The folder structure of this stage is shown below :
 
 | File                         | Description                                                               | 
 |------------------------------|---------------------------------------------------------------------------| 
+| **grammarUtility.hpp**       | Several Typedefs and utility enums and classes are declared               |
 | **grammar**                  | Defines Grammar class and related functions                               |
 | **parser.hpp**               | Entry file for stage 5 - recieves tokens and parse them                   |
 | **ll1_parsing.cpp**          | Utilizes LL(1) parsing technique to parse the tokens                      |
 | **rd_parsing.cpp**           | Utilizes recursive top-down parsing technique to parse through the tokens |
 | **lr0_parsing.cpp**          | Utilizes LR(0) parsing technique to parse the tokens                      |
+| **slr1_parsing.cpp**         | Utilizes SLR(1) parsing technique to create states and parse table        |
+| **lr_parserUtility.cpp**     | Defines closure, goto and parser fucntion for LR grammars                 |
 | **symbol.hpp**               | Defines Symbol class                                                      |
 | **symbolMap.hpp**            | Defines two maps - one from symbol to token and other from vice versa     |
 
@@ -126,8 +129,8 @@ This is a kind of bottom-up parser and utilizes 0 lookahead to parse. An automat
   - `LR0_Parser` function is the main parser function which utilizes stack to verify tokens.
 - **SLR(1) Parser**<br/>
 This is a king of bottom-up parser and utilizes FOLLOW lookahead to parse. Almost similar to LR(0) variant. There are pitfalls, howerver, not all grammars can be resolved. Here, in the implementation, we have ignored this. The parsing fails if we can perform neither shift nor reduce at any stage.
-  - `createLR0Automation` function is used for building the automation.
-  - `SLR1_Parser` function is the main parser function which utilizes stack to verify tokens.
+  - `create_SLR1_states` function is to create states for this parser.
+  - `create_SLR1_parseTable` function is for creating parse table for these kind of parsers.
 
 The work flow diagram in this stage looks as below :- 
 ```mermaid
@@ -136,8 +139,11 @@ flowchart LR
     SM[symbolMap.hpp] --> S[symbol.hpp]
     S --> GH[grammar.hpp]
     GH --> P
+    GU[grammarUtility.hpp] --> GH
     GC[grammar.cpp] --> GH
     RDP[rd_parsing.cpp] --> GH
     LL1P[ll1_parsing.cpp] --> GH
     LR0P[lr0_parsing.cpp] --> GH
+    SLR1P[slr1_parsing.cpp] --> GH
+    LRPU[lr_parserUtility_.cpp] --> GH
 ```

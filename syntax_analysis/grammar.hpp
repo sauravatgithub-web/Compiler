@@ -1,18 +1,6 @@
 # pragma once
 
-#include <vector>
-#include <unordered_set>
-#include <unordered_map>
-#include "symbol.hpp"
-
-typedef std::vector<Symbol> Production;
-typedef std::unordered_set<Symbol, SymbolHash> SymbolSet;
-typedef std::unordered_map<std::pair<Symbol, Symbol>, Production, SymbolPairHash> LL1_ParseTable;
-typedef std::tuple<Symbol, int, int> Item;
-typedef std::set<Item> LR_State;
-typedef std::unordered_map<std::pair<int, Symbol>, int, SymbolIntHash> LR_Automation;
-typedef std::map<LR_State, int> StateIndexMap;
-typedef std::map<int, LR_State> IndexStateMap;
+#include "grammarUtility.hpp"
 
 class Grammar {
 protected:
@@ -41,15 +29,14 @@ public:
     LL1_ParseTable create_parse_table();
     bool LL1_parser(const std::vector<Token>& tokens);
 
-    // std::vector<Item> create_items() {
-    //     std::vector<Item> items;
-    //     for(auto SymbolProductions : productions) {
-    //         int length = SymbolProductions.second.size();
-            
-    //         for(int i = 0; i < length; i++)
-    //     }
-    // }
     void closure(LR_State& state);
+    LR_State GOTO(LR_State state, Symbol sym);
+    bool LR_Parser(LR_ParseTable parseTable, const std::vector<Token>& tokens);
+
     std::tuple<LR_Automation, StateIndexMap, IndexStateMap> createLR0Automation();
     bool LR0_parser(const std::vector<Token>& tokens);
+    
+    StateIndexMap create_SLR1_states();
+    LR_ParseTable create_SLR1_parseTable();
+    bool SLR1_parser(const std::vector<Token>& tokens);
 };

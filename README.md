@@ -101,7 +101,7 @@ The folder structure of this stage is shown below :
 
 | File                         | Description                                                               | 
 |------------------------------|---------------------------------------------------------------------------| 
-| **grammarUtility.hpp**       | Several Typedefs and utility enums and classes are declared               |
+| **grammarUtility.hpp**       | Declares several Typedefs and utility enums and classes                   |
 | **grammar**                  | Defines Grammar class and related functions                               |
 | **parser.hpp**               | Entry file for stage 5 - recieves tokens and parse them                   |
 | **ll1_parsing.cpp**          | Utilizes LL(1) parsing technique to parse the tokens                      |

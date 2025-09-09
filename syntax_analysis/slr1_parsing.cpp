@@ -4,40 +4,37 @@
 #include "grammar.hpp"
 
 StateIndexMap Grammar::create_SLR1_states() {
+    StateIndexMap stateMap;
+    IndexStateMap indexToState;
 
-    auto create_items = [&]() {
-        std::vector<Item> items;
-        items.push_back({preStartSymbol, 0, 0});
+    std::vector<Symbol> allSymbols;
+    allSymbols.insert(allSymbols.end(), terminals.begin(), terminals.end());
+    allSymbols.insert(allSymbols.end(), nonTerminals.begin(), nonTerminals.end());
 
-        for(auto SymbolProductions : productions) {
-            Symbol sym = SymbolProductions.first;
-            int length = SymbolProductions.second.size();
-            
-            for(int i = 0; i < length; i++) {
-                Production p = SymbolProductions.second[i];
-                int size = p.size();
+    LR_State start;
+    start.insert({preStartSymbol, 0, 0});
+    closure(start);
 
-                for(int j = 0; j <= size; j++) {
-                    items.push_back({sym, i, j});
-                }
+    std::queue<LR_State> q;
+    stateMap[start] = 0;
+    indexToState[0] = start;
+    q.push(start);
+    int nextIndex = 1;
+
+    while(!q.empty()) {
+        LR_State currentState = q.front(); 
+        q.pop();
+
+        for(const Symbol& X : allSymbols) {
+            LR_State nextState = GOTO(currentState, X);
+            if(nextState.empty()) continue;
+
+            if(!stateMap.count(nextState)) {
+                stateMap[nextState] = nextIndex;
+                indexToState[nextIndex] = nextState;
+                q.push(nextState);
+                nextIndex++;
             }
-        }
-
-        return items;
-    };
-
-
-    std::vector<Item> items = create_items();
-    std::map<LR_State, int> stateMap;
-    int index = 0;
-
-    for(Item item : items) {
-        LR_State state;
-        state.insert(item);
-        closure(state);
-
-        if(!stateMap.count(state)) {
-            stateMap[state] = index++;
         }
     }
 
@@ -48,27 +45,45 @@ LR_ParseTable Grammar::create_SLR1_parseTable() {
     StateIndexMap stateMap = create_SLR1_states();
     LR_ParseTable parseTable;
 
-    for(auto [state, index] : stateMap) {
-        for(Item item : state) {
-            auto [sym, prodIdx, pos] = item;
-            Production production = productions[sym][prodIdx];
+    for(auto& [state, index] : stateMap) {
+        for(const Item& item : state) {
+            const auto& [sym, prodIdx, pos] = item;
+            const Production& production = productions[sym][prodIdx];
 
-            if(pos != production.size() && production[pos].nature == Nature::Terminal) {
-                LR_State nextState = GOTO(state, sym);
-                parseTable[{index, sym}] = Action(ActionType::SHIFT, stateMap[nextState]);
+            if(pos != (int)production.size() && production[pos].nature == Nature::Terminal) {
+                Symbol nextSym = production[pos];
+                LR_State nextState = GOTO(state, nextSym);
+                if(!nextState.empty() && stateMap.count(nextState)) {
+                    if(parseTable.count({index, nextSym})) {
+                        std::cerr << "Sorry, Grammar is not SLR(1)." << std::endl;
+                        std::exit(EXIT_FAILURE);
+                    }
+                    parseTable[{index, nextSym}] = Action(ActionType::SHIFT, stateMap[nextState]);
+                }
             }
-            else if(pos == production.size() && sym == preStartSymbol) {
-                parseTable[{index, sym}] = Action(ActionType::ACCEPT);
+            else if(pos == (int)production.size() && sym == preStartSymbol) {
+                parseTable[{index, END_OF_INPUT_SYMBOL}] = Action(ActionType::ACCEPT);
             }
-            else if(pos == production.size()) {
-                for(Symbol terms : follow[sym]) {
-                    parseTable[{index, sym}] = Action(ActionType::REDUCE, item);
+            else if(pos == (int)production.size()) {
+                for(const Symbol& term : follow[sym]) {
+                    if(parseTable.count({index, term})) {
+                        std::cerr << "Sorry, Grammar is not SLR(1)." << std::endl;
+                        std::exit(EXIT_FAILURE);
+                    }
+                    parseTable[{index, term}] = Action(ActionType::REDUCE, item);
                 }
             }
         }
 
-        for(Symbol nonTerm : nonTerminals) {
-            parseTable[{index, nonTerm}] = stateMap[GOTO(state, nonTerm)];
+        for(const Symbol& nonTerm : nonTerminals) {
+            LR_State nextState = GOTO(state, nonTerm);
+            if(!nextState.empty() && stateMap.count(nextState)) {
+                if(parseTable.count({index, nonTerm})) {
+                    std::cerr << "Sorry, Grammar is not SLR(1)." << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+                parseTable[{index, nonTerm}] = stateMap[nextState]; 
+            }
         }
     }
 

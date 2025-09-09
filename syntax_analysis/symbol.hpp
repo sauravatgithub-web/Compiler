@@ -18,6 +18,11 @@ public:
             if(isTerminal) type = nameType[sym];
         }
 
+    bool operator<(const Symbol& other) const {
+        if(nature != other.nature) return nature < other.nature;
+        return name < other.name;
+    }
+
     bool operator==(const Symbol& other) const {
         return name == other.name && nature == other.nature;
     }
@@ -43,6 +48,16 @@ struct SymbolIntHash {
     std::size_t operator()(const std::pair<int, Symbol>& spair) const {
         std::size_t hash = std::hash<std::string>()(spair.second.name) ^ (std::hash<int>()(static_cast<int>(spair.second.nature)) << 1);
         return spair.first ^ hash;
+    }
+};
+
+struct ItemHash {
+    std::size_t operator()(const std::tuple<Symbol, int, int>& item) const {
+        auto& [sym, idx, pos] = item;
+        std::size_t h1 = std::hash<std::string>()(sym.name) ^ (std::hash<int>()(static_cast<int>(sym.nature)) << 1);
+        std::size_t h2 = std::hash<int>()(idx);
+        std::size_t h3 = std::hash<int>()(pos);
+        return h1 ^ (h2 << 1) ^ (h3 << 2);
     }
 };
 

@@ -1,25 +1,26 @@
 #include <stack>
+#include <queue>
 #include "grammar.hpp"
 
 void Grammar::closure(LR_State& state) {
-    bool changed = true;
-    while(changed) {
-        changed = false;
+    std::queue<Item> q;
+    for(const auto& it : state) q.push(it);
 
-        for(auto& [symbol, index, pos] : state) {
-            if(pos != productions[symbol][index].size()) {
-                Symbol nextSym = productions[symbol][index][pos];
+    while(!q.empty()) {
+        Item item = q.front(); 
+        q.pop();
+        auto& [sym, prodIdx, pos] = item;
 
-                if(nextSym.nature == Nature::NonTerminal) {
-                    int size = productions[nextSym].size();
+        if(pos < (int)productions[sym][prodIdx].size()) {
+            Symbol nextSym = productions[sym][prodIdx][pos];
 
-                    for(int i = 0; i < size; i++) {
-                        Item newItem = {nextSym, i, 0};
+            if(nextSym.nature == Nature::NonTerminal) {
+                for(int i = 0; i < (int)productions[nextSym].size(); i++) {
+                    Item newItem = {nextSym, i, 0};
 
-                        if(!state.count(newItem)) {
-                            changed = true;
-                            state.insert(newItem);
-                        }
+                    if(!state.count(newItem)) {
+                        state.insert(newItem);
+                        q.push(newItem);
                     }
                 }
             }
@@ -31,7 +32,7 @@ LR_State Grammar::GOTO(LR_State state, Symbol sym) {
     LR_State nextState;
 
     for(auto [symbol, index, pos] : state) {
-        if(pos != productions[symbol][index].size() && productions[symbol][index][pos] == sym) {
+        if(pos != (int)productions[symbol][index].size() && productions[symbol][index][pos] == sym) {
             nextState.insert({symbol, index, pos+1});
         }
     }
@@ -42,37 +43,54 @@ LR_State Grammar::GOTO(LR_State state, Symbol sym) {
 
 bool Grammar::LR_Parser(LR_ParseTable parseTable, const std::vector<Token>& tokens) {
     std::stack<int> parserStack;
-    std::vector<Symbol> symbols;
-
     parserStack.push(0);
     int index = 0;
 
     while(true) {
         int state = parserStack.top();
         Symbol sym = symbolTable[tokenName[tokens[index].type]];
+        std::cout << sym.name << std::endl;
 
-        if(sym.nature == Nature::NonTerminal) {
-            parserStack.push(parseTable[{state, sym}]);
+        auto it = parseTable.find({state, sym});
+        if(it == parseTable.end()) {
+            std::cerr << "Parse error at state " << state << " on symbol " << sym.name << "\n";
+            return false;
         }
-        else {
-            if(parseTable[{state, sym}].type == ActionType::SHIFT) {
-                parserStack.push(parseTable[{state, sym}].state);
-            }
-            else if(parseTable[{state, sym}].type == ActionType::REDUCE) {
-                auto [symbol, prodIdx, pos] = parseTable[{state, sym}].item;
 
+        const ParseAction& entry = it->second;
+
+        if(std::holds_alternative<Action>(entry)) {
+            const Action& act = std::get<Action>(entry);
+
+            if(act.type == ActionType::SHIFT) {
+                parserStack.push(act.stateIndex);
+                index++;
+            }
+            else if(act.type == ActionType::REDUCE) {
+                const auto& [symbol, prodIdx, pos] = act.item;
                 int length = productions[symbol][prodIdx].size();
+
                 for(int i = 1; i <= length; i++) {
                     parserStack.pop();
                 }
 
                 int newState = parserStack.top();
-                parserStack.push(parseTable[{newState, symbol}]);
+                auto gotoIt = parseTable.find({newState, symbol});
+                if(gotoIt == parseTable.end() || !std::holds_alternative<int>(gotoIt->second)) {
+                    return false;
+                }
+
+                int gotoState = std::get<int>(gotoIt->second);
+                parserStack.push(gotoState);
             }
-            else if(parseTable[{state, sym}].type == ActionType::ACCEPT) {
+            else if(act.type == ActionType::ACCEPT) {
                 return true;
             }
             else return false;
         }
+        else if(std::holds_alternative<int>(entry)) {
+            parserStack.push(std::get<int>(entry));
+        }
+        else return false;
     }
 }

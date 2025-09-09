@@ -26,11 +26,13 @@ std::tuple<LR_Automation, StateIndexMap, IndexStateMap> Grammar::createLR0Automa
         auto GOTO = [&](Symbol sym) {
             LR_State nextState;
 
-            for(auto [symbol, index, pos] : currentState) {
-                if(pos != productions[symbol][index].size() && productions[symbol][index][pos] == sym) {
-                    nextState.insert({symbol, index, pos+1});
+            for(auto [symbol, prodIdx, pos] : currentState) {
+                if(pos != (int)productions[symbol][prodIdx].size() && productions[symbol][prodIdx][pos] == sym) {
+                    nextState.insert({symbol, prodIdx, pos+1});
                 }
             }
+
+            if(nextState.empty()) return;
 
             closure(nextState);
             if(!stateIndex.count(nextState)) {
@@ -38,8 +40,9 @@ std::tuple<LR_Automation, StateIndexMap, IndexStateMap> Grammar::createLR0Automa
                 stateIndex[nextState] = index;
                 indexState[index] = nextState;
                 stateQueue.push(index);
-                LR0_Automation[{stateIndex[currentState], sym}] = index;
             }
+
+            LR0_Automation[{stateIndex[currentState], sym}] = stateIndex[nextState];
         };
 
         for(Symbol term : terminals) {
@@ -65,8 +68,10 @@ bool Grammar::LR0_parser(const std::vector<Token>& tokens) {
     int index = 0;
 
     while(true) {
+        if(index >= (int)tokens.size()) return false;
+
         int state = parserStack.top();
-        Symbol sym = symbolTable[tokenName[tokens[index].type]];
+        Symbol sym = (index < (int)tokens.size()) ? symbolTable[tokenName[tokens[index].type]] : END_OF_INPUT_SYMBOL;
 
         if(LR0_Automation.count({state, sym})) {
             parserStack.push(LR0_Automation[{state, sym}]);
@@ -78,15 +83,19 @@ bool Grammar::LR0_parser(const std::vector<Token>& tokens) {
             Symbol nextSym;
             int count = 0;
 
-            for(auto [sym, prodIdx, pos] : automationState) {
-                if(pos == productions[sym][prodIdx].size()) {
-                    nextSym = sym;
+            for(auto [newSym, prodIdx, pos] : automationState) {
+                if(pos == (int)productions[newSym][prodIdx].size()) {
+                    if(count != 0) {
+                        std::cout << "Not an LR(0) grammar" << std::endl;
+                        break;
+                    }
+                    nextSym = newSym;
                     count = pos;
-                    break;
+                    // break;
                 }
             }
 
-            if(nextSym == preStartSymbol) return true;
+            if(nextSym == preStartSymbol && sym == END_OF_INPUT_SYMBOL) return true;
             if(count == 0) return false;
 
             for(int i = 1; i <= count; i++) {

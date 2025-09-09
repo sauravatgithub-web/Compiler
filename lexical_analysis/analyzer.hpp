@@ -93,5 +93,8 @@ Lexical_Ouptut getTokens() {
     }
 
     token_sequence.push_back(Token(token_type::_dollar, "$"));
+    
+    std::cout << "Lexical Analysis completed." << std::endl;
+    std::cout << "Generated tokens will be now passed for syntax analysis." << std::endl;
     return {token_sequence, symTable, litTable};
 }

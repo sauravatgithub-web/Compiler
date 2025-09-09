@@ -25,5 +25,6 @@ std::vector<std::pair<minimized_DFA, std::string>> create_state_machines() {
         state_machines.push_back(FSM);
     }
 
+    std::cout << "Automata creation completed." << std::endl;
     return state_machines;
 }

@@ -33,7 +33,8 @@ public:
     LR_State GOTO(LR_State state, Symbol sym);
     bool LR_Parser(LR_ParseTable parseTable, const std::vector<Token>& tokens);
 
-    std::tuple<LR_Automation, StateIndexMap, IndexStateMap> createLR0Automation();
+    StateIndexMap create_LR0_states();
+    LR_ParseTable create_LR0_parseTable();
     bool LR0_parser(const std::vector<Token>& tokens);
     
     StateIndexMap create_SLR1_states();

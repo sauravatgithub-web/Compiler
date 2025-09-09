@@ -3,105 +3,92 @@
 #include <queue>
 #include "grammar.hpp"
 
-std::tuple<LR_Automation, StateIndexMap, IndexStateMap> Grammar::createLR0Automation() {
-    LR_Automation LR0_Automation;
-    StateIndexMap stateIndex;
-    IndexStateMap indexState;
-    std::queue<int> stateQueue;
+StateIndexMap Grammar::create_LR0_states() {
+    StateIndexMap stateMap;
 
-    int index = 0;
-    LR_State state;
-    state.insert({preStartSymbol, 0, 0});
-    closure(state);
-    stateIndex[state] = index;
-    indexState[index] = state;
-    stateQueue.push(index);
+    std::vector<Symbol> allSymbols;
+    allSymbols.insert(allSymbols.end(), terminals.begin(), terminals.end());
+    allSymbols.insert(allSymbols.end(), nonTerminals.begin(), nonTerminals.end());
 
-    while(!stateQueue.empty()) {
-        int idx = stateQueue.front();
-        stateQueue.pop();
+    LR_State start;
+    start.insert({preStartSymbol, 0, 0});
+    closure(start);
 
-        LR_State currentState = indexState[idx];
+    std::queue<LR_State> q;
+    stateMap[start] = 0;
+    q.push(start);
+    int nextIndex = 1;
 
-        auto GOTO = [&](Symbol sym) {
-            LR_State nextState;
+    while(!q.empty()) {
+        LR_State currentState = q.front(); 
+        q.pop();
 
-            for(auto [symbol, prodIdx, pos] : currentState) {
-                if(pos != (int)productions[symbol][prodIdx].size() && productions[symbol][prodIdx][pos] == sym) {
-                    nextState.insert({symbol, prodIdx, pos+1});
-                }
+        for(const Symbol& X : allSymbols) {
+            LR_State nextState = GOTO(currentState, X);
+            if(nextState.empty()) continue;
+
+            if(!stateMap.count(nextState)) {
+                stateMap[nextState] = nextIndex;
+                q.push(nextState);
+                nextIndex++;
             }
-
-            if(nextState.empty()) return;
-
-            closure(nextState);
-            if(!stateIndex.count(nextState)) {
-                index++;
-                stateIndex[nextState] = index;
-                indexState[index] = nextState;
-                stateQueue.push(index);
-            }
-
-            LR0_Automation[{stateIndex[currentState], sym}] = stateIndex[nextState];
-        };
-
-        for(Symbol term : terminals) {
-            GOTO(term);
-        }
-        for(Symbol nonTerm : nonTerminals) {
-            GOTO(nonTerm);
         }
     }
 
-    return {LR0_Automation, stateIndex, indexState};
+    return stateMap;
 }
 
+LR_ParseTable Grammar::create_LR0_parseTable() {
+    StateIndexMap stateMap = create_LR0_states();
+    LR_ParseTable parseTable;
 
-bool Grammar::LR0_parser(const std::vector<Token>& tokens) {
-    auto [LR0_Automation, stateMap, indexMap] = createLR0Automation();
+    for(auto& [state, index] : stateMap) {
+        for(const Item& item : state) {
+            const auto& [sym, prodIdx, pos] = item;
+            const Production& production = productions[sym][prodIdx];
 
-    std::stack<int> parserStack;
-    std::vector<Symbol> symbols;
-
-    parserStack.push(0);
-    symbols.push_back(END_OF_INPUT_SYMBOL);
-    int index = 0;
-
-    while(true) {
-        if(index >= (int)tokens.size()) return false;
-
-        int state = parserStack.top();
-        Symbol sym = (index < (int)tokens.size()) ? symbolTable[tokenName[tokens[index].type]] : END_OF_INPUT_SYMBOL;
-
-        if(LR0_Automation.count({state, sym})) {
-            parserStack.push(LR0_Automation[{state, sym}]);
-            symbols.push_back(sym);
-            index++;
-        }
-        else {
-            LR_State automationState = indexMap[state];
-            Symbol nextSym;
-            int count = 0;
-
-            for(auto [newSym, prodIdx, pos] : automationState) {
-                if(pos == (int)productions[newSym][prodIdx].size()) {
-                    nextSym = newSym;
-                    count = pos;
-                    break;
+            if(pos != (int)production.size() && production[pos].nature == Nature::Terminal) {
+                Symbol nextSym = production[pos];
+                LR_State nextState = GOTO(state, nextSym);
+                if(!nextState.empty() && stateMap.count(nextState)) {
+                    if(parseTable.count({index, nextSym})) {
+                        std::cerr << "Sorry, Grammar is not LR(0)." << std::endl;
+                        std::exit(EXIT_FAILURE);
+                    }
+                    parseTable[{index, nextSym}] = Action(ActionType::SHIFT, stateMap[nextState]);
                 }
             }
-
-            if(nextSym == preStartSymbol && sym == END_OF_INPUT_SYMBOL) return true;
-            if(count == 0) return false;
-
-            for(int i = 1; i <= count; i++) {
-                parserStack.pop();
-                symbols.pop_back();
+            else if(pos == (int)production.size() && sym == preStartSymbol) {
+                parseTable[{index, END_OF_INPUT_SYMBOL}] = Action(ActionType::ACCEPT);
             }
+            else if(pos == (int)production.size()) {
+                Symbol nextSym = production[pos-1];
+                for(Symbol term : terminals) {
+                    if(parseTable.count({index, term})) {
+                        std::cerr << "Sorry, Grammar is not LR(0)." << std::endl;
+                        std::exit(EXIT_FAILURE);
+                    }
+                    parseTable[{index, term}] = Action(ActionType::REDUCE, item);
+                }
+            }
+        }
 
-            symbols.push_back(nextSym);
-            state = parserStack.top();
-            parserStack.push(LR0_Automation[{state, nextSym}]);
+        for(const Symbol& nonTerm : nonTerminals) {
+            LR_State nextState = GOTO(state, nonTerm);
+            if(!nextState.empty() && stateMap.count(nextState)) {
+                if(parseTable.count({index, nonTerm})) {
+                    std::cerr << "Sorry, Grammar is not LR(0)." << std::endl;
+                    std::exit(EXIT_FAILURE);
+                }
+                parseTable[{index, nonTerm}] = stateMap[nextState]; 
+            }
         }
     }
+
+    return parseTable;
+}
+
+bool Grammar::LR0_parser(const std::vector<Token>& tokens) {
+    LR_ParseTable parseTable = create_SLR1_parseTable();
+    return LR_Parser(parseTable, tokens);
 }

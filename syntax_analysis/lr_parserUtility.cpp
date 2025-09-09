@@ -17,6 +17,9 @@ void Grammar::closure(LR_State& state) {
             if(nextSym.nature == Nature::NonTerminal) {
                 for(int i = 0; i < (int)productions[nextSym].size(); i++) {
                     Item newItem = {nextSym, i, 0};
+                    if(productions[nextSym][i][0].isEpsilon()) {
+                        newItem = {nextSym, i, 1};
+                    }
 
                     if(!state.count(newItem)) {
                         state.insert(newItem);
@@ -49,7 +52,6 @@ bool Grammar::LR_Parser(LR_ParseTable parseTable, const std::vector<Token>& toke
     while(true) {
         int state = parserStack.top();
         Symbol sym = symbolTable[tokenName[tokens[index].type]];
-        std::cout << sym.name << std::endl;
 
         auto it = parseTable.find({state, sym});
         if(it == parseTable.end()) {
@@ -69,6 +71,7 @@ bool Grammar::LR_Parser(LR_ParseTable parseTable, const std::vector<Token>& toke
             else if(act.type == ActionType::REDUCE) {
                 const auto& [symbol, prodIdx, pos] = act.item;
                 int length = productions[symbol][prodIdx].size();
+                if(productions[symbol][prodIdx][0].isEpsilon()) length = 0;
 
                 for(int i = 1; i <= length; i++) {
                     parserStack.pop();

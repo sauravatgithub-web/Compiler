@@ -5,7 +5,6 @@
 
 StateIndexMap Grammar::create_SLR1_states() {
     StateIndexMap stateMap;
-    IndexStateMap indexToState;
 
     std::vector<Symbol> allSymbols;
     allSymbols.insert(allSymbols.end(), terminals.begin(), terminals.end());
@@ -17,7 +16,6 @@ StateIndexMap Grammar::create_SLR1_states() {
 
     std::queue<LR_State> q;
     stateMap[start] = 0;
-    indexToState[0] = start;
     q.push(start);
     int nextIndex = 1;
 
@@ -25,13 +23,14 @@ StateIndexMap Grammar::create_SLR1_states() {
         LR_State currentState = q.front(); 
         q.pop();
 
-        for(const Symbol& X : allSymbols) {
+        for(Symbol& X : allSymbols) {
+            if(X == END_OF_INPUT_SYMBOL || X.isEpsilon()) continue;
+
             LR_State nextState = GOTO(currentState, X);
             if(nextState.empty()) continue;
 
             if(!stateMap.count(nextState)) {
                 stateMap[nextState] = nextIndex;
-                indexToState[nextIndex] = nextState;
                 q.push(nextState);
                 nextIndex++;
             }
@@ -48,7 +47,7 @@ LR_ParseTable Grammar::create_SLR1_parseTable() {
     for(auto& [state, index] : stateMap) {
         for(const Item& item : state) {
             const auto& [sym, prodIdx, pos] = item;
-            const Production& production = productions[sym][prodIdx];
+            Production& production = productions[sym][prodIdx];
 
             if(pos != (int)production.size() && production[pos].nature == Nature::Terminal) {
                 Symbol nextSym = production[pos];
@@ -89,7 +88,6 @@ LR_ParseTable Grammar::create_SLR1_parseTable() {
 
     return parseTable;
 }
-
 
 bool Grammar::SLR1_parser(const std::vector<Token>& tokens) {
     LR_ParseTable parseTable = create_SLR1_parseTable();

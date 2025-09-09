@@ -85,13 +85,9 @@ bool Grammar::LR0_parser(const std::vector<Token>& tokens) {
 
             for(auto [newSym, prodIdx, pos] : automationState) {
                 if(pos == (int)productions[newSym][prodIdx].size()) {
-                    if(count != 0) {
-                        std::cout << "Not an LR(0) grammar" << std::endl;
-                        break;
-                    }
                     nextSym = newSym;
                     count = pos;
-                    // break;
+                    break;
                 }
             }
 

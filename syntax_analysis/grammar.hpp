@@ -30,7 +30,9 @@ public:
     bool LL1_parser(const std::vector<Token>& tokens);
 
     void closure(LR_State& state);
+    void closure(LALR_State& state);
     LR_State GOTO(LR_State state, Symbol sym);
+    LALR_State GOTO(LALR_State state, Symbol sym);
     bool LR_Parser(LR_ParseTable parseTable, const std::vector<Token>& tokens);
 
     StateIndexMap create_LR0_states();
@@ -40,4 +42,8 @@ public:
     StateIndexMap create_SLR1_states();
     LR_ParseTable create_SLR1_parseTable();
     bool SLR1_parser(const std::vector<Token>& tokens);
+
+    LAStateIndexMap create_LR1_states();
+    LR_ParseTable create_LR1_parseTable();
+    bool LR1_parser(const std::vector<Token>& tokens);
 };

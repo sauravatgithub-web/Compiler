@@ -23,11 +23,12 @@ int main() {
             case 2 :  return grammar.LL1_parser(tokens);
             case 3 :  return grammar.LR0_parser(tokens);
             case 4 :  return grammar.SLR1_parser(tokens);
+            case 5 :  return grammar.LR1_parser(tokens);
             default : return false;
         }
     };
 
-    if(parser(4)) std::cout << "Parsing completed successfully." << std::endl;
+    if(parser(5)) std::cout << "Parsing completed successfully." << std::endl;
     else {
         std::cerr << "Parsing error" << std::endl;
         std::exit(EXIT_FAILURE);

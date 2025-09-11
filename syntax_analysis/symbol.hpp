@@ -61,5 +61,19 @@ struct ItemHash {
     }
 };
 
+struct LAItemHash {
+    std::size_t operator()(const std::tuple<Symbol, int, int, std::set<Symbol>>& item) const {
+        auto& [sym, idx, pos, las] = item;
+        std::size_t h1 = std::hash<std::string>()(sym.name) ^ (std::hash<int>()(static_cast<int>(sym.nature)) << 1);
+        std::size_t h2 = std::hash<int>()(idx);
+        std::size_t h3 = std::hash<int>()(pos);
+        std::size_t h4 = 0;
+        for(const Symbol& s : las) {
+            h4 ^= std::hash<std::string>()(s.name) ^ (std::hash<int>()(static_cast<int>(s.nature)) << 1);
+        }
+        return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3);
+    }
+};
+
 inline const Symbol EPSILON_SYMBOL(EPSILON, true);
 inline const Symbol END_OF_INPUT_SYMBOL(END_OF_INPUT, true);

@@ -81,6 +81,7 @@ flowchart LR
 
 ## Stage 4
 We will define our grammar in [grammar.txt](sourceFiles/grammar.txt) file. Our 5<sup>th</sup> stage i.e. syntax analysis will use the grammar built in this stage and the tokens from [Stage 3](#stage-3) to validate our tokens and further building an Abstract Syntax Tree for further analysis. Definition should carefully exclude all left recursions and left factoring, since it causes conflict in **recursive descent** and **LL1** parsing.
+Again, it must be ensured that grammar may not contain **shift-reduce** or **reduce-reduce** conflict, because then the grammar won't be bottom-up parsable.
 
 The current draft of grammar supports function declarations and calls, conditional statements, loops, return statements, int, long, char and string datatypes, and input and output statements. 
 

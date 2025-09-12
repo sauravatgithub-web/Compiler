@@ -65,10 +65,10 @@ LR_ParseTable Grammar::create_LR1_parseTable() {
             }
             else if(pos == (int)production.size()) {
                 for(const Symbol& term : firsts) {
-                    // if(parseTable.count({index, term})) {
-                    //     std::cerr << "Sorry, Grammar is not LR(1)." << std::endl;
-                    //     std::exit(EXIT_FAILURE);
-                    // }
+                    if(parseTable.count({index, term})) {
+                        std::cerr << "Sorry, Grammar is not LR(1)." << std::endl;
+                        std::exit(EXIT_FAILURE);
+                    }
                     parseTable[{index, term}] = Action(ActionType::REDUCE, Item(sym, prodIdx, pos));
                 }
             }

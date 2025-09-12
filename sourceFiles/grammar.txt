@@ -1,4 +1,4 @@
-NON-TERMINATING SYMBOLS : START, smts_list, smts, decl, decl_tail, assign, func_call, args, more_args, expr, rel_expr, rel_expr', log_expr, log_expr', add_expr, add_expr', mul_expr, mul_expr', unary, primary, condsmts, elifcond, elscond, whileloop, forloop, func_spec, func, main_func, params, extra_params, return_stmt, datatype, type_head, type_tail, func_decl, func_decl_tail, func_decl_tailsq, assign_or_func_call, assign_or_func_call_tail, io_stmt, i_stmt, o_stmt, o_stmt', io_stmt_tail, o_out, i_out, o_out', i_out', o_item, id_func, id_func', endl_opt
+NON-TERMINATING SYMBOLS : START, smts_list, smts, decl, decl_tail, func_call, args, more_args, expr, rel_expr, rel_expr', log_expr, log_expr', add_expr, add_expr', mul_expr, mul_expr', unary, primary, ifsmt, condsmts, cond_end, cond_tail, whileloop, forloop, func_spec, func, main_func, params, extra_params, return_stmt, datatype, type_head, type_tail, func_decl, func_decl_tail, func_decl_tailsq, assign_or_func_call, assign_or_func_call_tail, io_stmt, i_stmt, i_stmt', o_stmt, o_stmt', io_stmt_tail, o_out, i_out, o_out', i_out', o_item, id_func, id_func'
 TERMINATING SYMBOLS : id, int_lit, doub_lit, char_lit, str_lit, relop, aop, bop, lop, assignop, end, fas, fae, cbs, cbe, larrow, rarrow, scrop, comma, if, else, while, for, int, double, char, string, bool, return, main, long, std, cout, cin, larrow, rarrow, dlarrow, drarrow, endl
 
 PRODUCTIONS : 
@@ -7,16 +7,15 @@ START -> smts_list
 smts_list -> smts smts_list | ε
 smts -> func_decl | assign_or_func_call | condsmts | whileloop | forloop | cbs smts_list cbe | return_stmt end | io_stmt end
 
-io_stmt -> std scrop io_stmt_tail
-io_stmt_tail -> cout dlarrow o_stmt endl_opt | cin i_stmt
-o_stmt -> o_item o_stmt' | ε
+io_stmt -> std scrop io_stmt_tail | io_stmt_tail
+io_stmt_tail -> cout dlarrow o_stmt | cin drarrow i_stmt
+o_stmt -> o_item o_stmt'
 o_stmt' -> dlarrow o_item o_stmt' | ε
-i_stmt -> drarrow id i_stmt'
-i_stmt' -> drarrow id i_stmt' | ε
-o_item -> int_lit | doub_lit | char_lit | str_lit | id_func | ε
+i_stmt -> id i_stmt'
+i_stmt' -> darrow id i_stmt' | ε
+o_item -> int_lit | doub_lit | char_lit | str_lit | id_func | endl | std scrop endl
 id_func -> id id_func'
-id_func' -> fas args fae | ε 
-endl_opt -> std scrop endl | ε
+id_func' -> fas args fae | ε
 
 datatype -> type_head type_tail
 type_head -> int | double | char | string | bool | long
@@ -34,24 +33,23 @@ params -> datatype id extra_params | ε
 extra_params -> comma datatype id extra_params | ε
 
 assign_or_func_call -> id assign_or_func_call_tail
-assign_or_func_call_tail -> assignop assign | fas func_call
-
-assign -> assignop expr end
+assign_or_func_call_tail -> assignop expr end | fas func_call
 
 func_call -> args fae end
 args -> expr more_args | ε
 more_args -> comma expr more_args | ε
 
-condsmts -> if fas expr fae cbs smts_list cbe elifcond elscond
-elifcond -> else if fas expr fae cbs smts_list cbe elifcond | ε
-elscond -> else cbs smts_list cbe | ε
+ifsmt -> if fas expr fae cbs smts_list cbe 
+condsmts -> ifsmt cond_end
+cond_end -> else cond_tail
+cond_tail -> ifsmt cond_end | cbs smts_list cbe
 
 whileloop -> while fas expr fae cbs smts_list cbe
 
 forloop -> for fas for_init end for_cond end for_step fae cbs smts_list cbe
-for_init -> decl | assign | ε
+for_init -> func_decl | assign_or_func_call | ε
 for_cond -> expr | ε
-for_step -> assign | func_call | ε
+for_step -> assign_or_func_call | ε
 
 return_stmt -> return expr
 

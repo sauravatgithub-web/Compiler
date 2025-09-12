@@ -46,4 +46,8 @@ public:
     LAStateIndexMap create_LR1_states();
     LR_ParseTable create_LR1_parseTable();
     bool LR1_parser(const std::vector<Token>& tokens);
+    
+    MergedStates mergeStates(const LAStateIndexMap& stateMap);
+    LR_ParseTable create_LALR_parseTable();
+    bool LALR_parser(const std::vector<Token>& tokens);
 };

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <set>
+#include <map>
 #include <variant>
 #include <unordered_set>
 #include <unordered_map>
@@ -39,6 +40,9 @@ typedef std::unordered_map<LR_State, int, StateHash> StateIndexMap;
 typedef std::unordered_map<int, LR_State> IndexStateMap;
 typedef std::unordered_map<LALR_State, int, LAStateHash> LAStateIndexMap;
 typedef std::unordered_map<int, LALR_State> IndexLAStateMap;
+typedef std::map<LR_State, LALR_State> CoreStateMap;
+typedef std::map<LALR_State, LR_State> StateCoreMap;
+typedef std::tuple<CoreStateMap, StateCoreMap, LAStateIndexMap> MergedStates;
 
 enum class ActionType { SHIFT, REDUCE, ACCEPT };
 
